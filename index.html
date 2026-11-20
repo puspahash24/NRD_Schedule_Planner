@@ -232,6 +232,13 @@ textarea{width:100%;font-family:Consolas,monospace;font-size:12px;border:1px sol
 
 <!-- OUTPUT -->
 <section class="tab" id="t-out">
+  <div class="panel" style="border-left:4px solid #0d5c63">
+    <h3>Schedule code for ROM Quality Monitoring (for automatic compliance)</h3>
+    <div class="hint" style="margin-bottom:8px">Sends this shift's faces, ratios, alternates and planned quality as one message. The sampler or geologist pastes the whole message in the ROM app (Schedule compliance, or Import entries). Fed faces and stocks are then matched to the schedule automatically.</div>
+    <div class="bar"><button class="btn pri" id="schMake">Make schedule code</button><button class="btn" id="schCopy">Copy</button><button class="btn" id="schShare">Share (WhatsApp)</button><span class="hint" id="schMsg"></span></div>
+    <textarea id="schTxt" rows="7" readonly placeholder="Press “Make schedule code”"></textarea>
+    <div class="hint" style="margin-top:6px">For automatic matching, name faces with pit and MRL as usual (e.g. H6-672, WP-516, P4-658, K-702/714) and stocks with the same name the samplers use (e.g. Jig SY, DCMP STK). Set Mine (NIM / KTM) and Type (Face / Stock) in Inventory.</div>
+  </div>
   <div class="panel">
     <h3>Schedule image (to share)</h3>
     <div class="bar">
@@ -829,6 +836,28 @@ $('#tsvCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('#tsv'
 $('#imgDl').onclick=async()=>dl(lastBlob||await getBlob(),fname());
 $('#imgShare').onclick=async()=>share(lastBlob||await getBlob(),fname());
 $('#imgCopy').onclick=async()=>{try{const b=lastBlob||await getBlob();await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);msg('Image copied')}catch(e){msg('Copy blocked — right-click / long-press the image → Copy')}};
+
+/* ================= schedule code for ROM Quality Monitoring (SCH1) ================= */
+const ROM_PL={wet:'Wet Plant',ndcmp:'NDCMP',iopph:'IOPP Hopper',ioppj:'IOPP Jaw Crusher',csnim:'C&S NOA',metnim:'NIM METSO LT',sandktm:'KTM SANDVIK',metktm:'KTM METSO'};
+const SHL={A:'A shift (6 AM to 2 PM)',B:'B shift (2 PM to 10 PM)',C:'C shift (10 PM to 6 AM)'};
+const b64u=a=>{let t='';a.forEach(c=>{t+=String.fromCharCode(c)});return btoa(t).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')};
+const chk=t=>{let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36).toUpperCase().padStart(4,'0').slice(-4)};
+const mc1=f=>f?.mine==='KTM'?'K':f?.mine==='NIM'?'N':'';
+const q4=(o,an)=>['Fe','SiO2','Al2O3','P'].map(a=>o[a]==null||isNaN(o[a])?null:+(+o[a]).toFixed(DEC[a]));
+function schedCode(){const P=[];
+  PL.forEach(p=>{const st=S.plants[p.k],rows=st.rows.filter(r=>r.fid&&r.ratio),alts=altIds(p.k).map(inv).filter(Boolean);
+    if(!rows.length&&!alts.length&&!st.alt)return;const c=calc(p);
+    const o={pl:ROM_PL[p.k],r:rows.map(r=>{const d=rowData(r,p),f=inv(r.fid);return[d.name,d.ore||'',+r.ratio,mc1(f),f?.kind==='Stock'?'S':'F',q4(d)]}),q:q4(c.avg)};
+    const a=alts.map(f=>[f.name,mc1(f),f.kind==='Stock'?'S':'F']);if(st.alt)st.alt.split(',').map(x=>x.trim()).filter(Boolean).forEach(n=>a.push([n,'','F']));if(a.length)o.a=a;P.push(o)});
+  if(!P.length)return null;
+  const o={v:1,d:S.date,s:S.shift,i:(S.inc||'').trim(),t:new Date().toISOString(),p:P};
+  const pl=b64u(new TextEncoder().encode(JSON.stringify(o))),code='SCH1.'+pl+'.'+chk(pl);
+  const lines=P.map(x=>`${x.pl}: ${x.r.map(r=>r[0]+' '+fmtR(r[2])+'%').join(', ')||'-'}${x.a?' | Alt: '+x.a.map(a=>a[0]).join(', '):''}`);
+  return 'Feed schedule | '+S.date.split('-').reverse().join('-')+' | '+SHL[S.shift]+(o.i?' | NRD In-charge '+o.i:'')+'\n'+lines.join('\n')+'\n\nSchedule code for ROM Quality Monitoring (paste the whole message):\n'+code}
+$('#schMake').onclick=()=>{const bad=PL.filter(p=>{const c=calc(p);return c.used&&!ratioOK(c)}).map(p=>p.sh);const m=schedCode();
+  if(!m){msg('Nothing scheduled yet');return}$('#schTxt').value=m;$('#schMsg').textContent=bad.length?'Note: ratio not 100 in '+bad.join(', '):'Code ready — copy or share it';};
+$('#schCopy').onclick=async()=>{if(!$('#schTxt').value)$('#schMake').onclick();const t=$('#schTxt').value;if(!t)return;try{await navigator.clipboard.writeText(t);msg('Schedule code copied')}catch(e){$('#schTxt').select();msg(document.execCommand('copy')?'Schedule code copied':'Press Ctrl+C to copy')}};
+$('#schShare').onclick=async()=>{if(!$('#schTxt').value)$('#schMake').onclick();const t=$('#schTxt').value;if(!t)return;try{if(navigator.share)await navigator.share({text:t});else{await navigator.clipboard.writeText(t);msg('Sharing not available — copied instead')}}catch(e){if(e&&e.name!=='AbortError')msg('Could not share — use Copy')}};
 
 /* ================= history ================= */
 function renderHist(){const h=H();$('#histT tbody').innerHTML=h.map((x,i)=>`<tr><td>${esc(x.s.date)}</td><td><b>${esc(x.s.shift)}</b></td><td>${esc(x.s.inc)}</td><td class="hint">${esc(x.at)}</td>

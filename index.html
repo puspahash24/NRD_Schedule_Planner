@@ -608,9 +608,11 @@ function initMap(){updBhInfo();$('#bhLbl').checked=!!mc().lbl;$('#bhW').checked=
   drawBH(true);drawInvPins();renderPanel();setTimeout(()=>MAP.invalidateSize(),80)}
 $('#bhLbl').onchange=e=>{mc().lbl=e.target.checked;save();lblVis()};
 $('#bhW').onchange=e=>{mc().w=e.target.checked;save();bhUpdate()};
+const g2=v=>v==null?'':String(+v);
+const holeName=h=>h.name||h.id||(h.Fe!=null?`${g2(h.Fe)}-${g2(h.SiO2)}-${g2(h.Al2O3)}-${g2(h.P)}${h.mat?'_'+h.mat:''}`:'');
 function drawBH(fit){if(!MAP)return;LG.bh.clearLayers();LG.lines.clearLayers();
   BH.lines.forEach(l=>L.polyline(l.coords,{color:l.col||'#ffffff',opacity:l.o??1,weight:l.w||2,interactive:false}).addTo(LG.lines));
-  BH.holes.forEach(h=>{const nm=h.name||h.id||'';L.circleMarker([h.lat,h.lon],{radius:5,color:'#000',weight:1,fillColor:tcol(h.mat),fillOpacity:.9})
+  BH.holes.forEach(h=>{const nm=holeName(h);L.circleMarker([h.lat,h.lon],{radius:5,color:'#000',weight:1,fillColor:tcol(h.mat),fillOpacity:.9})
     .bindPopup(`<b>${esc(nm)}</b><br>Fe ${h.Fe??'-'} | SiO2 ${h.SiO2??'-'} | Al2O3 ${h.Al2O3??'-'} | P ${h.P??'-'}`)
     .bindTooltip(esc(nm),{permanent:true,direction:'right',offset:[6,0],className:'lbl'}).addTo(LG.bh)});
   if(fit&&BH.holes.length)MAP.fitBounds(L.latLngBounds(BH.holes.map(h=>[h.lat,h.lon])).pad(.1));
@@ -710,7 +712,7 @@ function renderRes(){const el=$('#pkRes');if(!el)return;
   const {avg,mix,near,wt}=RES;
   el.innerHTML=`<div class="q4"><div><b>${fmt(avg.Fe,'Fe')}</b><span>Fe %</span></div><div><b>${fmt(avg.SiO2,'SiO2')}</b><span>SiO2 %</span></div><div><b>${fmt(avg.Al2O3,'Al2O3')}</b><span>Al2O3 %</span></div><div><b>${fmt(avg.P,'P')}</b><span>P %</span></div></div>
    <div class="hint">${near.length} nearest holes, ${wt?'distance weighted':'simple average'}. Material: ${Object.entries(mix).sort((a,b)=>b[1]-a[1]).map(([t,f])=>`${esc(t)} ${Math.round(f*100)}%`).join(', ')}</div>
-   <div class="wrap" style="margin-top:6px"><table class="g"><tr><th class="l">Hole</th><th>m</th><th>Fe</th><th>SiO2</th><th>Al2O3</th><th>P</th></tr>${near.map(x=>`<tr><td class="l"><span class="dot" style="background:${tcol(x.h.mat)}"></span>${esc(x.h.name||x.h.id)}</td><td>${x.d.toFixed(0)}</td><td>${x.h.Fe??''}</td><td>${x.h.SiO2??''}</td><td>${x.h.Al2O3??''}</td><td>${x.h.P??''}</td></tr>`).join('')}</table></div>`}
+   <div class="wrap" style="margin-top:6px"><table class="g"><tr><th class="l">Hole</th><th>m</th><th>Fe</th><th>SiO2</th><th>Al2O3</th><th>P</th></tr>${near.map(x=>`<tr><td class="l"><span class="dot" style="background:${tcol(x.h.mat)}"></span>${esc(holeName(x.h))}</td><td>${x.d.toFixed(0)}</td><td>${x.h.Fe??''}</td><td>${x.h.SiO2??''}</td><td>${x.h.Al2O3??''}</td><td>${x.h.P??''}</td></tr>`).join('')}</table></div>`}
 function savePick(){const name=$('#pkName').value.trim();if(!RES){msg('Place the excavator on a face with blastholes in range first');return null}if(!name){msg('Give the face a name');$('#pkName').focus();return null}
   let f=S.inv.find(x=>x.name.toLowerCase()===name.toLowerCase());const isNew=!f;if(!f){f={id:uid(),name,rem:''};S.inv.push(f)}
   AN.forEach(a=>f[a]=rnd(RES.avg[a],a));f.mine=$('#pkMine').value;f.kind=$('#pkKind').value;f.ore=$('#pkOre').value.trim();f.lat=LAST.lat;f.lon=LAST.lon;

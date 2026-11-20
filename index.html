@@ -104,10 +104,17 @@ textarea{width:100%;font-family:Consolas,monospace;font-size:12px;border:1px sol
 .chip{background:#eef1f5;border-radius:12px;padding:2px 9px;font-size:12px}
 .frm{display:grid;grid-template-columns:90px 1fr;gap:6px 8px;align-items:center;margin:10px 0}
 .frm .inp{width:100%}
-/* matrix */
-#mx td input{min-width:46px;font-weight:700}
-#mx td.has{background:#eef6ff}
-#mx th.pl{writing-mode:horizontal-tb;min-width:70px}
+/* alternates */
+.altbox{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:7px 10px;border-top:1px dashed #f3b4b4;background:#fff8f8}
+.achip{display:inline-flex;align-items:center;gap:2px;background:#fee2e2;color:#b91c1c;border-radius:12px;padding:2px 4px 2px 9px;font-size:12px;font-weight:600}
+.achip .x{font-size:12px;color:#b91c1c}
+.altadd{font-size:12px;padding:3px 5px;max-width:150px}
+.fc .ab{float:right;border:1px solid #f3b4b4;background:#fff8f8;color:#b91c1c;border-radius:10px;font-size:11px;font-weight:600;padding:1px 7px;cursor:pointer}
+.fc .ab.on{background:#fee2e2}
+.altpop{margin-top:6px;border-top:1px dashed #f3b4b4;padding-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;font-size:12px;cursor:default}
+.altpop label{display:flex;gap:4px;align-items:center}
+.drop.alt{border-color:#f3b4b4;color:#b91c1c;margin-top:6px}
+.lane .altbox{border-top:1px dashed #f3b4b4}
 /* board */
 .board{display:grid;grid-template-columns:230px 1fr;gap:12px}
 @media(max-width:760px){.board{grid-template-columns:1fr}}
@@ -151,11 +158,8 @@ textarea{width:100%;font-family:Consolas,monospace;font-size:12px;border:1px sol
   <button data-t="map">Blasthole Map</button>
   <span class="sep"></span>
   <button data-t="plants">Plant Feed</button>
-  <button data-t="matrix">Matrix</button>
   <button data-t="board">Board</button>
-  <button data-t="blend">Auto Blend</button>
   <span class="sep"></span>
-  <button data-t="changes">Changes</button>
   <button data-t="out">Output</button>
   <button data-t="hist">Saved shifts</button>
 </nav>
@@ -217,64 +221,13 @@ textarea{width:100%;font-family:Consolas,monospace;font-size:12px;border:1px sol
   </div>
 </section>
 
-<!-- MATRIX -->
-<section class="tab" id="t-matrix">
-  <div class="bar"><span class="hint">Type the ratio % for each face in each plant. Bottom rows show each plant's blend; the right column shows how many plants each face feeds.</span>
-    <label class="hint"><input type="checkbox" id="mxUsed"> show only faces in use</label></div>
-  <div class="wrap"><table class="g" id="mx"></table></div>
-</section>
-
 <!-- BOARD -->
 <section class="tab" id="t-board">
-  <div class="bar"><span class="hint"><b>Desktop:</b> drag a face card onto a plant. <b>Phone:</b> tap a card, then tap a plant. Slide or type the ratio.</span></div>
+  <div class="bar"><span class="hint"><b>Desktop:</b> drag a face card onto a plant (top box = feed, red box = alternate). <b>Phone:</b> tap a card, then tap a box. Use <b style="color:#b91c1c">Alternate for…</b> on a card to tag it for several plants at once.</span></div>
   <div class="board">
     <div><input class="inp" id="bdQ" placeholder="Search faces…" style="width:100%;margin-bottom:8px"><div id="bdFaces"></div></div>
     <div id="bdLanes"></div>
   </div>
-</section>
-
-<!-- BLEND -->
-<section class="tab" id="t-blend">
-  <div class="blend">
-    <div>
-      <div class="panel">
-        <h3>1 · Plant &amp; targets</h3>
-        <div class="bar"><select class="inp" id="blPlant" style="flex:1"></select></div>
-        <table class="g" id="blT"></table>
-        <div class="bar" style="margin-top:10px">
-          <span class="hint">Aim:</span>
-          <select class="inp" id="blObj">
-            <option value="lowGrade">Use most low-grade (lowest Fe that still meets targets)</option>
-            <option value="maxFe">Highest Fe</option>
-            <option value="minImp">Lowest SiO2 + Al2O3</option>
-            <option value="few">Fewest faces</option>
-          </select>
-          <span class="hint">Step</span>
-          <select class="inp" id="blStep"><option value="5">5%</option><option value="10">10%</option></select>
-        </div>
-        <div class="hint">Targets are remembered per plant. Leave a box blank for no limit.</div>
-      </div>
-      <div class="panel">
-        <h3>2 · Faces allowed</h3>
-        <div class="bar"><button class="btn sm" id="blFromPlan">Tick faces in current plan</button><button class="btn sm" id="blAll">Tick all</button><button class="btn sm" id="blNone">Untick all</button></div>
-        <div class="wrap"><table class="g" id="blF"></table></div>
-        <div class="bar" style="margin-top:10px"><button class="btn pri" id="blRun">⚙ Suggest blends</button><span class="hint" id="blInfo"></span></div>
-      </div>
-    </div>
-    <div><div class="panel"><h3>3 · Suggested blends <span class="hint" style="font-weight:400">— each uses a different set of faces</span></h3><div id="blRes" class="hint">Set targets, tick faces and press Suggest.</div></div></div>
-  </div>
-</section>
-
-<!-- CHANGES -->
-<section class="tab" id="t-changes">
-  <div class="bar">
-    <span class="hint">Compare with:</span><select class="inp" id="cgBase" style="min-width:230px"></select>
-    <button class="btn pri" id="cgText">Copy changes (WhatsApp text)</button>
-    <button class="btn" id="cgImgBtn">Make changes image</button>
-  </div>
-  <div id="cgBody"></div>
-  <div class="panel" id="cgImgP" style="display:none;margin-top:12px"><h3>Changes image</h3>
-    <div class="bar"><button class="btn" id="cgShare">Share</button><button class="btn" id="cgDl">Download</button><span class="hint">Or long-press / right-click → Save.</span></div><img id="chgImg" alt=""></div>
 </section>
 
 <!-- OUTPUT -->
@@ -306,7 +259,7 @@ textarea{width:100%;font-family:Consolas,monospace;font-size:12px;border:1px sol
   <div class="bar">
     <button class="btn pri" id="hSave">Save this shift</button>
     <button class="btn" id="hNext">Carry forward to next shift</button>
-    <span class="hint">“Carry forward” keeps the plan, moves to the next shift (C → next day A) and remembers this shift for the Changes view.</span>
+    <span class="hint">“Carry forward” saves this shift, keeps the plan (feeds and alternates) and moves to the next shift (C → next day A).</span>
   </div>
   <div class="wrap"><table class="g" id="histT"><thead><tr><th>Date</th><th>Shift</th><th>In-charge</th><th>Saved at</th><th></th></tr></thead><tbody></tbody></table></div>
   <div class="panel" style="margin-top:14px">
@@ -362,8 +315,8 @@ function seedInv(){return [
  ['DCMP STK','FO',63,2.8,2.7,.1,.025,'NIM','Stock'],
 ].map(r=>({id:uid(),name:r[0],ore:r[1],Fe:r[2],SiO2:r[3],Al2O3:r[4],P:r[5],K2O:r[6],mine:r[7],kind:r[8],rem:''}))}
 const blankRows=(n=3)=>Array.from({length:n},()=>({fid:'',ratio:null,ov:{}}));
-function defState(){const p={};PL.forEach(x=>p[x.k]={rows:blankRows(),alt:''});return{date:today(),shift:guessShift(),inc:'',inv:seedInv(),plants:p}}
-function fix(s){PL.forEach(x=>{if(!s.plants[x.k])s.plants[x.k]={rows:blankRows(),alt:''}});
+function defState(){const p={};PL.forEach(x=>p[x.k]={rows:blankRows(),alt:'',altIds:[]});return{date:today(),shift:guessShift(),inc:'',inv:seedInv(),plants:p}}
+function fix(s){PL.forEach(x=>{if(!s.plants[x.k])s.plants[x.k]={rows:blankRows(),alt:''};const ps=s.plants[x.k];if(!Array.isArray(ps.altIds))ps.altIds=[];if(ps.alt==null)ps.alt=''});
   s.targets=s.targets||{};s.opt=s.opt||{};s.reasons=s.reasons||{};s.mapCfg=Object.assign({k:3,R:15,w:true,lbl:true},s.mapCfg||{});if(typeof s.mapCfg.w!=='boolean')s.mapCfg.w=true;s.base=s.base||null;s.blendPlant=s.blendPlant||'wet';return s}
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.inv&&s.plants)return s}catch(e){}return null}
 let S=fix(load()||defState());
@@ -394,7 +347,7 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>showTab(b.datas
 function showTab(t){CUR=t;
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
   document.querySelectorAll('.tab').forEach(s=>s.classList.toggle('on',s.id==='t-'+t));
-  ({inv:renderInv,map:initMap,plants:renderPlants,matrix:renderMatrix,board:renderBoard,blend:renderBlend,changes:renderChanges,out:renderOut,hist:renderHist})[t]();
+  ({inv:renderInv,map:initMap,plants:renderPlants,board:renderBoard,out:renderOut,hist:renderHist})[t]();
 }
 
 /* ================= inventory ================= */
@@ -416,11 +369,11 @@ $('#invT').addEventListener('click',e=>{const tr=e.target.closest('tr');if(!tr)r
   if(e.target.hasAttribute('data-go')){showTab('map');setTimeout(()=>{if(MAP){MAP.setView([f.lat,f.lon],Math.max(MAP.getZoom(),18));faceInfo(id)}},150);return}
   if(!e.target.hasAttribute('data-del'))return;
   const used=PL.filter(p=>S.plants[p.k].rows.some(r=>r.fid===id)).map(p=>p.sh);
-  const go=()=>{S.inv=S.inv.filter(x=>x.id!==id);PL.forEach(p=>{S.plants[p.k].rows=S.plants[p.k].rows.filter(r=>r.fid!==id)});save();renderInv()};
+  const go=()=>{S.inv=S.inv.filter(x=>x.id!==id);PL.forEach(p=>{S.plants[p.k].rows=S.plants[p.k].rows.filter(r=>r.fid!==id);S.plants[p.k].altIds=(S.plants[p.k].altIds||[]).filter(x=>x!==id)});save();renderInv()};
   if(used.length){msg(`${f.name} is used in ${used.join(', ')} — click ✕ again to delete`);confirm2(e.target,'Sure?',go)}else go();
 });
 $('#invAdd').onclick=()=>{S.inv.push({id:uid(),name:'',ore:'',Fe:null,SiO2:null,Al2O3:null,P:null,K2O:null,mine:'NIM',kind:'Face',rem:''});save();renderInv();const ins=document.querySelectorAll('#invT tbody tr:last-child input');ins[0]&&ins[0].focus()};
-$('#invClear').onclick=e=>confirm2(e.target,'Click again to clear',()=>{S.inv=[];PL.forEach(p=>S.plants[p.k].rows=blankRows());save();renderInv()});
+$('#invClear').onclick=e=>confirm2(e.target,'Click again to clear',()=>{S.inv=[];PL.forEach(p=>{S.plants[p.k].rows=blankRows();S.plants[p.k].altIds=[]});save();renderInv()});
 $('#invPasteBtn').onclick=()=>{$('#pastePanel').style.display='block';$('#pasteTxt').focus()};
 $('#pasteCancel').onclick=()=>{$('#pastePanel').style.display='none'};
 function parsePaste(t){return t.split(/\r?\n/).map(l=>l.split(l.includes('\t')?'\t':',').map(x=>x.trim())).filter(c=>c.length>=3&&c[0]&&num(c[2])!=null)
@@ -722,6 +675,24 @@ function faceInfo(id){const f=inv(id);if(!f)return;if(!$('#pkName'))renderPanel(
   if(LOCK){msg(`${f.name}: Fe ${fmt(f.Fe,'Fe')} SiO2 ${fmt(f.SiO2,'SiO2')} Al2O3 ${fmt(f.Al2O3,'Al2O3')}`);return}
   nameTouched=true;$('#pkName').value=f.name;syncName();setPos(f.lat,f.lon);MAP.panTo([f.lat,f.lon])}
 
+/* ================= alternate faces / stocks ================= */
+const altIds=pk=>S.plants[pk].altIds||(S.plants[pk].altIds=[]);
+function toggleAlt(pk,fid,on){const a=altIds(pk),i=a.indexOf(fid),f=inv(fid),p=PK(pk);if(on==null)on=i<0;
+  if(on&&i<0){a.push(fid);msg(`${f?.name} tagged as alternate for ${p.sh}${S.plants[pk].rows.some(r=>r.fid===fid&&r.ratio)?' (it is also in the feed)':''}`)}
+  if(!on&&i>=0){a.splice(i,1);msg(`${f?.name} removed as alternate for ${p.sh}`)}save()}
+const altLabel=pk=>altIds(pk).some(id=>inv(id)?.kind==='Stock')?'Alternate Face / Stock':'Alternate Face';
+const altText=pk=>[...altIds(pk).map(id=>inv(id)?.name).filter(Boolean),S.plants[pk].alt||''].filter(Boolean).join(', ');
+function altBox(p){const st=S.plants[p.k],ids=altIds(p.k);
+  return `<div class="altbox" data-p="${p.k}"><span class="hint" style="font-weight:600">${altLabel(p.k)}:</span>
+   ${ids.map(id=>{const f=inv(id);return f?`<span class="achip">${esc(f.name)}<button class="x" data-altrm="${id}" title="Remove">✕</button></span>`:''}).join('')}
+   ${st.alt?`<span class="achip" title="Typed earlier">${esc(st.alt)}<button class="x" data-altold="1" title="Remove">✕</button></span>`:''}
+   <select class="inp altadd" data-altadd="${p.k}"><option value="">+ add…</option>${S.inv.filter(f=>!ids.includes(f.id)).map(f=>`<option value="${f.id}">${esc(f.name)} (${esc(f.kind||'Face')})</option>`).join('')}</select></div>`}
+function altEv(e){const box=e.target.closest('.altbox');if(!box)return false;const pk=box.dataset.p;
+  if(e.type==='change'&&e.target.dataset.altadd){if(e.target.value)toggleAlt(pk,e.target.value,true);return true}
+  if(e.type==='click'&&e.target.dataset.altrm){toggleAlt(pk,e.target.dataset.altrm,false);return true}
+  if(e.type==='click'&&e.target.dataset.altold){S.plants[pk].alt='';save();return true}
+  return false}
+
 /* ================= plant cards ================= */
 function invOpts(sel){const g={};S.inv.forEach(f=>{const k=(f.mine||'—')+' · '+(f.kind||'Face');(g[k]=g[k]||[]).push(f)});
   return `<option value="">— select —</option>`+Object.keys(g).sort().map(k=>`<optgroup label="${esc(k)}">${g[k].map(f=>`<option value="${f.id}"${f.id===sel?' selected':''}>${esc(f.name)}${f.Fe!=null?'  ('+fmt(f.Fe,'Fe')+')':''}</option>`).join('')}</optgroup>`).join('')}
@@ -735,7 +706,7 @@ function card(p){const st=S.plants[p.k];
   return `<div class="card" data-p="${p.k}"><div class="ch" style="background:${p.c}"><span>${esc(p.n)}</span><span class="badge" id="bd-${p.k}"></span></div>
   <div style="overflow-x:auto"><table class="g"><thead><tr><th class="l">Area/Face</th><th>Ore Type</th><th>Ratio</th>${p.an.map(a=>`<th class="n">${a}</th>`).join('')}<th></th></tr></thead>
   <tbody>${rows}</tbody><tfoot><tr id="tf-${p.k}"></tr></tfoot></table></div>
-  <div class="cf"><button class="btn sm" data-add>+ Row</button>${p.alt?`<span class="hint">Alternate Face</span><input data-alt list="dlFaces" value="${esc(st.alt)}">`:''}</div></div>`}
+  <div class="cf"><button class="btn sm" data-add>+ Row</button></div>${altBox(p)}</div>`}
 function badge(p,c){if(!c.used)return['','Not scheduled'];return ratioOK(c)?['ok','Ratio 100 ✓']:['bad',`Ratio ${fmtR(c.sr)} (${c.sr<100?'short '+fmtR(100-c.sr):'over '+fmtR(c.sr-100)})`]}
 function updTot(p){const c=calc(p),tf=$('#tf-'+p.k);if(!tf)return;
   tf.innerHTML=`<td colspan="2" style="text-align:right">Total / Avg =</td><td style="color:${c.used&&!ratioOK(c)?'var(--bad)':'inherit'}">${fmtR(c.sr)}</td>${p.an.map(a=>`<td>${fmt(c.avg[a],a)}</td>`).join('')}<td></td>`;
@@ -743,7 +714,7 @@ function updTot(p){const c=calc(p),tf=$('#tf-'+p.k);if(!tf)return;
 function renderPlants(){renderDL();$('#pL').innerHTML=PL.filter(p=>p.s==='L').map(card).join('');$('#pR').innerHTML=PL.filter(p=>p.s==='R').map(card).join('');PL.forEach(updTot)}
 function plantEv(e,type){const cd=e.target.closest('.card');if(!cd)return;const p=PK(cd.dataset.p),st=S.plants[p.k];
   const redraw=()=>{save();cd.outerHTML=card(p);updTot(p)};
-  if(e.target.hasAttribute('data-alt')){st.alt=e.target.value;save();return}
+  if(altEv(e)){if(e.type!=='input'){cd.outerHTML=card(p);updTot(p)}return}
   if(type==='click'){if(e.target.hasAttribute('data-add')){st.rows.push({fid:'',ratio:null,ov:{}});redraw()}else if(e.target.hasAttribute('data-del')){st.rows.splice(+e.target.closest('tr').dataset.i,1);redraw()}return}
   const tr=e.target.closest('tr[data-i]');if(!tr)return;const r=st.rows[+tr.dataset.i],k=e.target.dataset.f;
   if(k==='fid'){if(type==='change'){r.fid=e.target.value;r.ov={};redraw()}return}
@@ -753,175 +724,56 @@ function plantEv(e,type){const cd=e.target.closest('.card');if(!cd)return;const 
     if(e.target.value===''||v===base||(k==='ore'&&v===(base||''))){delete r.ov[k];e.target.classList.remove('ov')}else{r.ov[k]=v;e.target.classList.add('ov')}}
   save();updTot(p)}
 ['input','change','click'].forEach(t=>$('#t-plants').addEventListener(t,e=>plantEv(e,t)));
-$('#clrPlants').onclick=e=>confirm2(e.target,'Click again to clear',()=>{PL.forEach(p=>S.plants[p.k]={rows:blankRows(),alt:''});save();renderPlants()});
+$('#clrPlants').onclick=e=>confirm2(e.target,'Click again to clear',()=>{PL.forEach(p=>S.plants[p.k]={rows:blankRows(),alt:'',altIds:[]});save();renderPlants()});
 $('#loadSample').onclick=()=>{seedInv().forEach(n=>{if(!S.inv.some(f=>f.name===n.name))S.inv.push(n)});
   const id=n=>S.inv.find(f=>f.name===n).id,R=(n,r,ov={})=>({fid:id(n),ratio:r,ov});
   const s={wet:[R('H6-672 (face)',35),R('K-702/714',35),R('Jig SY',30)],ndcmp:[R('K-690',60),R('WP-516',40)],
     iopph:[R('H6-672 (face)',45),R('Jig SY',30),R('P4-658',25,{Fe:60,SiO2:3.5,Al2O3:4.3,P:.12,K2O:.03})],ioppj:[R('Jig SY',30),R('K-702/714',70)],
     csnim:[R('WP-516',20),R('K-702/714',30),R('K-690',30),R('H6-672 (face)',20,{Fe:61.5,SiO2:2.4,Al2O3:3.9})],metnim:[R('WP-516',100)],
     sandktm:[R('K-690',50,{ore:'HO+BD'}),R('K-702/714',50)],metktm:[R('P4-658',25),R('K-690',30),R('K-702/714',45)]};
-  PL.forEach(p=>S.plants[p.k]={rows:s[p.k],alt:''});S.date='2026-11-18';S.shift='C';S.inc='Tiyasa';syncHeader();save();renderPlants();msg('Sample loaded')};
-
-/* ================= matrix (option 1) ================= */
-function renderMatrix(){const only=$('#mxUsed').checked;
-  const faces=S.inv.filter(f=>!only||PL.some(p=>S.plants[p.k].rows.some(r=>r.fid===f.id&&r.ratio)));
-  const cell=(p,f)=>{const r=S.plants[p.k].rows.find(x=>x.fid===f.id);const v=r&&r.ratio?r.ratio:'';return `<td class="${v?'has':''}"><input data-p="${p.k}" data-fid="${f.id}" inputmode="decimal" value="${v}"></td>`};
-  $('#mx').innerHTML=`<thead><tr><th class="l">Face / Stock</th><th>Ore</th><th>Fe</th><th>SiO2</th><th>Al2O3</th>${PL.map(p=>`<th class="pl" style="background:${p.c}">${esc(p.sh)}</th>`).join('')}<th>Plants</th></tr></thead>
-  <tbody>${faces.map(f=>`<tr><td class="l"><b>${esc(f.name)}</b> <span class="hint">${esc(f.mine||'')}</span></td><td>${esc(f.ore||'')}</td><td>${fmt(f.Fe,'Fe')}</td><td>${fmt(f.SiO2,'SiO2')}</td><td>${fmt(f.Al2O3,'Al2O3')}</td>${PL.map(p=>cell(p,f)).join('')}<td id="mxc-${f.id}"></td></tr>`).join('')||`<tr><td colspan="14" class="hint" style="padding:14px">No faces.</td></tr>`}</tbody>
-  <tfoot id="mxF"></tfoot>`;updMatrix()}
-function updMatrix(){
-  S.inv.forEach(f=>{const td=$('#mxc-'+f.id);if(!td)return;const n=PL.filter(p=>S.plants[p.k].rows.some(r=>r.fid===f.id&&r.ratio)).length;td.innerHTML=n?`<span class="pill ${n>=4?'p-warn':'p-mut'}">${n}</span>`:'<span class="hint">idle</span>'});
-  const cs=PL.map(calc);
-  const row=(lab,fn)=>`<tr><td colspan="5" style="text-align:right">${lab}</td>${cs.map((c,i)=>`<td>${fn(c,PL[i])}</td>`).join('')}<td></td></tr>`;
-  $('#mxF').innerHTML=row('Σ Ratio',c=>c.used?`<span class="${ratioOK(c)?'vok':'vbad'}">${fmtR(c.sr)}${ratioOK(c)?' ✓':''}</span>`:'')+
-    row('Fe',c=>fmt(c.avg.Fe,'Fe'))+row('SiO2',c=>fmt(c.avg.SiO2,'SiO2'))+row('Al2O3',c=>fmt(c.avg.Al2O3,'Al2O3'))+row('P',c=>fmt(c.avg.P,'P'))+row('K2O',(c,p)=>p.an.includes('K2O')?fmt(c.avg.K2O,'K2O'):'–')}
-$('#mx').addEventListener('change',e=>{const t=e.target;if(!t.dataset.p)return;setRatio(t.dataset.p,t.dataset.fid,num(t.value));t.parentElement.classList.toggle('has',!!num(t.value));updMatrix()});
-$('#mxUsed').onchange=renderMatrix;
+  PL.forEach(p=>S.plants[p.k]={rows:s[p.k],alt:'',altIds:[]});S.plants.ndcmp.altIds=[id('P4-658')];S.date='2026-11-18';S.shift='C';S.inc='Tiyasa';syncHeader();save();renderPlants();msg('Sample loaded')};
 
 /* ================= board (option 3) ================= */
-let PICK=null;
+let PICK=null,ALTOPEN=null;
 function renderBoard(){const q=($('#bdQ').value||'').toLowerCase();
   $('#bdFaces').innerHTML=S.inv.filter(f=>!q||f.name.toLowerCase().includes(q)).map(f=>{const used=PL.filter(p=>S.plants[p.k].rows.some(r=>r.fid===f.id&&r.ratio)).length;
-    return `<div class="fc${PICK===f.id?' pick':''}" draggable="true" data-fid="${f.id}" style="border-left-color:${feCol(f.Fe)}"><b>${esc(f.name)}</b> <span class="hint">${esc(f.ore||'')}</span>
-    <div class="g3">Fe ${fmt(f.Fe,'Fe')} · SiO2 ${fmt(f.SiO2,'SiO2')} · Al ${fmt(f.Al2O3,'Al2O3')}</div><div class="hint">${esc(f.mine||'')} · ${used?`in ${used} plant${used>1?'s':''}`:'idle'}</div></div>`}).join('')||'<div class="hint">No faces.</div>';
+    const alts=PL.filter(p=>altIds(p.k).includes(f.id));
+    return `<div class="fc${PICK===f.id?' pick':''}" draggable="true" data-fid="${f.id}" style="border-left-color:${feCol(f.Fe)}"><button class="ab${ALTOPEN===f.id?' on':''}" data-altfor="${f.id}">Alternate for…${alts.length?' ('+alts.length+')':''}</button><b>${esc(f.name)}</b> <span class="hint">${esc(f.ore||'')}</span>
+    <div class="g3">Fe ${fmt(f.Fe,'Fe')} · SiO2 ${fmt(f.SiO2,'SiO2')} · Al ${fmt(f.Al2O3,'Al2O3')}</div><div class="hint">${esc(f.mine||'')} · ${esc(f.kind||'Face')} · ${used?`feeds ${used} plant${used>1?'s':''}`:'idle'}${alts.length?` · <span style="color:#b91c1c">alt: ${alts.map(p=>esc(p.sh)).join(', ')}</span>`:''}</div>
+    ${ALTOPEN===f.id?`<div class="altpop">${PL.map(p=>`<label><input type="checkbox" data-altp="${p.k}" data-altf="${f.id}"${altIds(p.k).includes(f.id)?' checked':''}>${esc(p.sh)}</label>`).join('')}</div>`:''}</div>`}).join('')||'<div class="hint">No faces.</div>';
   $('#bdLanes').innerHTML=PL.map(lane).join('')}
 function laneFoot(p){const c=calc(p);return c.used?`Fe <b>${fmt(c.avg.Fe,'Fe')}</b> · SiO2 <b>${fmt(c.avg.SiO2,'SiO2')}</b> · Al2O3 <b>${fmt(c.avg.Al2O3,'Al2O3')}</b> · P <b>${fmt(c.avg.P,'P')}</b>`:'<span class="hint">Empty</span>'}
 function laneBadge(p){const c=calc(p);return `<span class="badge ${c.used?(ratioOK(c)?'ok':'bad'):''}" id="lbd-${p.k}">${fmtR(c.sr)}%</span>`}
 function lane(p){const st=S.plants[p.k];
   return `<div class="lane" data-p="${p.k}"><div class="lh" style="background:${p.c}">${esc(p.n)}${laneBadge(p)}</div><div class="lb">${st.rows.map((r,i)=>{if(!r.fid)return'';const d=rowData(r,p);
     return `<div class="le"><div class="lt"><b>${esc(d.name)}</b><span><input class="ln" data-i="${i}" value="${r.ratio??''}" inputmode="decimal">% <button class="x" data-rm="${i}">✕</button></span></div><input type="range" min="0" max="100" step="5" value="${r.ratio||0}" data-i="${i}" class="lr"></div>`}).join('')}
-    <div class="drop">${PICK?'Tap to add <b>'+esc(inv(PICK)?.name||'')+'</b>':'Drop a face here'}</div></div><div class="lf" id="lf-${p.k}">${laneFoot(p)}</div></div>`}
+    <div class="drop" data-zone="feed">${PICK?'Tap to add <b>'+esc(inv(PICK)?.name||'')+'</b> to feed':'Drop a face here — feed'}</div>
+    <div class="drop alt" data-zone="alt">${PICK?'Tap to tag <b>'+esc(inv(PICK)?.name||'')+'</b> as alternate':'Drop here — alternate face / stock'}</div></div><div class="lf" id="lf-${p.k}">${laneFoot(p)}</div>${altBox(p)}</div>`}
 $('#bdQ').oninput=renderBoard;
 $('#bdFaces').addEventListener('dragstart',e=>{const c=e.target.closest('.fc');if(c){e.dataTransfer.setData('text/plain',c.dataset.fid);e.dataTransfer.effectAllowed='copy'}});
-$('#bdFaces').addEventListener('click',e=>{const c=e.target.closest('.fc');if(!c)return;PICK=PICK===c.dataset.fid?null:c.dataset.fid;renderBoard()});
+$('#bdFaces').addEventListener('click',e=>{const c=e.target.closest('.fc');if(!c)return;
+  if(e.target.dataset.altfor){ALTOPEN=ALTOPEN===e.target.dataset.altfor?null:e.target.dataset.altfor;renderBoard();return}
+  if(e.target.closest('.altpop'))return;
+  PICK=PICK===c.dataset.fid?null:c.dataset.fid;renderBoard()});
+$('#bdFaces').addEventListener('change',e=>{const t=e.target;if(!t.dataset.altp)return;toggleAlt(t.dataset.altp,t.dataset.altf,t.checked);renderBoard()});
 const lanes=$('#bdLanes');
 lanes.addEventListener('dragover',e=>{const l=e.target.closest('.lane');if(!l)return;e.preventDefault();document.querySelectorAll('.lane.over').forEach(x=>x!==l&&x.classList.remove('over'));l.classList.add('over')});
 lanes.addEventListener('dragleave',e=>{const l=e.target.closest('.lane');if(l&&!l.contains(e.relatedTarget))l.classList.remove('over')});
-lanes.addEventListener('drop',e=>{const l=e.target.closest('.lane');if(!l)return;e.preventDefault();l.classList.remove('over');const fid=e.dataTransfer.getData('text/plain');if(fid&&inv(fid)){addToPlant(l.dataset.p,fid);renderBoard()}});
+lanes.addEventListener('drop',e=>{const l=e.target.closest('.lane');if(!l)return;e.preventDefault();l.classList.remove('over');const fid=e.dataTransfer.getData('text/plain');if(!fid||!inv(fid))return;
+  if(e.target.closest('[data-zone="alt"],.altbox'))toggleAlt(l.dataset.p,fid,true);else addToPlant(l.dataset.p,fid);renderBoard()});
 lanes.addEventListener('click',e=>{const l=e.target.closest('.lane');if(!l)return;const pk=l.dataset.p;
+  if(altEv(e)){renderBoard();return}
   if(e.target.dataset.rm!=null){S.plants[pk].rows.splice(+e.target.dataset.rm,1);save();renderBoard();return}
-  if(e.target.tagName==='INPUT')return;if(PICK){addToPlant(pk,PICK);PICK=null;renderBoard()}});
-lanes.addEventListener('input',e=>{const l=e.target.closest('.lane');if(!l||e.target.dataset.i==null)return;const p=PK(l.dataset.p),r=S.plants[p.k].rows[+e.target.dataset.i];
+  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT'||e.target.closest('.altbox'))return;
+  if(PICK){if(e.target.closest('[data-zone="alt"]'))toggleAlt(pk,PICK,true);else addToPlant(pk,PICK);PICK=null;renderBoard()}});
+lanes.addEventListener('change',e=>{if(altEv(e))renderBoard()});
+lanes.addEventListener('input',e=>{const l=e.target.closest('.lane');if(!l||e.target.dataset.i==null||e.target.closest('.altbox'))return;const p=PK(l.dataset.p),r=S.plants[p.k].rows[+e.target.dataset.i];
   r.ratio=num(e.target.value);const le=e.target.closest('.le');if(e.target.classList.contains('lr'))le.querySelector('.ln').value=r.ratio??'';else le.querySelector('.lr').value=r.ratio||0;
   save();$('#lf-'+p.k).innerHTML=laneFoot(p);$('#lbd-'+p.k).outerHTML=laneBadge(p)});
 
-/* ================= auto blend (option 2) ================= */
-function blendCfg(pk){const T=S.targets[pk]||(S.targets[pk]={});const O=S.opt[pk]||(S.opt[pk]={faces:{},step:5,obj:'lowGrade'});
-  if(!Object.keys(O.faces).length)S.plants[pk].rows.forEach(r=>{if(r.fid)O.faces[r.fid]={on:true}});return{T,O}}
-function renderBlend(){const pk=S.blendPlant,p=PK(pk),{T,O}=blendCfg(pk);
-  $('#blPlant').innerHTML=plantOpts(pk);$('#blObj').value=O.obj;$('#blStep').value=O.step;
-  const lim=a=>a==='Fe'?'Min':'Max';
-  $('#blT').innerHTML=`<tr><th>Grade</th>${p.an.map(a=>`<th>${a}</th>`).join('')}</tr><tr><td class="hint">Limit</td>${p.an.map(a=>`<td><input data-t="${a}" inputmode="decimal" value="${T[a]??''}" placeholder="${lim(a)}"></td>`).join('')}</tr>
-   <tr><td class="hint">Now</td>${p.an.map(a=>{const c=calc(p),v=c.avg[a];const bad=v!=null&&T[a]!=null&&(a==='Fe'?v<T[a]:v>T[a]);return `<td class="${v==null?'':bad?'vbad':'vok'}">${fmt(v,a)}</td>`}).join('')}</tr>`;
-  $('#blF').innerHTML=`<tr><th></th><th class="l">Face</th><th>Fe</th><th>SiO2</th><th>Al2O3</th><th>Min %</th><th>Max %</th></tr>`+
-   S.inv.map(f=>{const o=O.faces[f.id]||{};return `<tr><td><input type="checkbox" data-on="${f.id}"${o.on?' checked':''} style="width:auto"></td><td class="l">${esc(f.name)}</td><td>${fmt(f.Fe,'Fe')}</td><td>${fmt(f.SiO2,'SiO2')}</td><td>${fmt(f.Al2O3,'Al2O3')}</td>
-     <td><input data-mn="${f.id}" inputmode="decimal" value="${o.min??''}" placeholder="0"></td><td><input data-mx="${f.id}" inputmode="decimal" value="${o.max??''}" placeholder="100"></td></tr>`}).join('');
-  $('#blInfo').textContent=''}
-$('#blPlant').onchange=e=>{S.blendPlant=e.target.value;save();renderBlend();$('#blRes').innerHTML='Set targets, tick faces and press Suggest.'};
-$('#blObj').onchange=e=>{blendCfg(S.blendPlant).O.obj=e.target.value;save()};
-$('#blStep').onchange=e=>{blendCfg(S.blendPlant).O.step=+e.target.value;save()};
-$('#blT').addEventListener('input',e=>{const a=e.target.dataset.t;if(!a)return;blendCfg(S.blendPlant).T[a]=num(e.target.value);save()});
-$('#blF').addEventListener('input',e=>{const {O}=blendCfg(S.blendPlant),t=e.target;const id=t.dataset.on||t.dataset.mn||t.dataset.mx;if(!id)return;const o=O.faces[id]||(O.faces[id]={});
-  if(t.dataset.on)o.on=t.checked;else if(t.dataset.mn){o.min=num(t.value);if(o.min)o.on=true}else{o.max=num(t.value)}save();if(!t.dataset.on&&o.on){const cb=document.querySelector(`[data-on="${id}"]`);if(cb)cb.checked=true}});
-$('#blFromPlan').onclick=()=>{const {O}=blendCfg(S.blendPlant);Object.values(O.faces).forEach(o=>o.on=false);S.plants[S.blendPlant].rows.forEach(r=>{if(r.fid)(O.faces[r.fid]=O.faces[r.fid]||{}).on=true});save();renderBlend()};
-$('#blAll').onclick=()=>{const {O}=blendCfg(S.blendPlant);S.inv.forEach(f=>(O.faces[f.id]=O.faces[f.id]||{}).on=true);save();renderBlend()};
-$('#blNone').onclick=()=>{const {O}=blendCfg(S.blendPlant);Object.values(O.faces).forEach(o=>o.on=false);save();renderBlend()};
-function comb(n,r){let x=1;for(let i=1;i<=r;i++)x=x*(n-r+i)/i;return Math.round(x)}
-function optimise(p,T,O){const fs=S.inv.filter(f=>O.faces[f.id]?.on);if(!fs.length)return{err:'Tick at least one face.'};
-  const step=O.step,U=Math.round(100/step),k=fs.length,A=p.an;
-  const lo=fs.map(f=>Math.ceil((num(O.faces[f.id].min)||0)/step-1e-9)),hi=fs.map(f=>{const m=num(O.faces[f.id].max);return Math.min(U,Math.floor((m==null?100:m)/step+1e-9))});
-  if(lo.reduce((a,b)=>a+b,0)>U)return{err:'Minimum % values add up to more than 100.'};
-  if(hi.reduce((a,b)=>a+b,0)<U)return{err:'Maximum % values add up to less than 100.'};
-  const est=comb(U+k-1,k-1);if(est>4e6)return{err:`${k} faces at ${step}% steps is ${Math.round(est/1e6)} million combinations — untick some faces or use 10% steps.`};
-  const val=fs.map(f=>A.map(a=>f[a]==null?null:+f[a]));const sums=A.map(()=>0),dens=A.map(()=>0),cur=new Array(k).fill(0);
-  const iFe=A.indexOf('Fe'),iSi=A.indexOf('SiO2'),iAl=A.indexOf('Al2O3');const lim=A.map(a=>T[a]==null?null:+T[a]);const wt=A.map(a=>a==='P'||a==='K2O'?20:1);
-  const bestM=new Map(),nearM=new Map();let n=0;
-  // keep the best blend for each distinct set of faces, so suggestions differ
-  const push=(M,it)=>{let key='';for(let i=0;i<k;i++)key+=cur[i]?'1':'0';const o=M.get(key);if(o&&o.sc<=it.sc)return;M.set(key,{r:cur.slice(),g:A.map((_,j)=>dens[j]?sums[j]/dens[j]:null),sc:it.sc})};
-  const add=(i,u)=>{if(!u)return;cur[i]+=u;for(let j=0;j<A.length;j++){const x=val[i][j];if(x!=null){sums[j]+=u*x;dens[j]+=u}}};
-  const evalc=()=>{n++;let v=0;for(let j=0;j<A.length;j++){if(lim[j]==null||!dens[j])continue;const g=sums[j]/dens[j];if(j===iFe){if(g<lim[j]-1e-9)v+=(lim[j]-g)*wt[j]}else if(g>lim[j]+1e-9)v+=(g-lim[j])*wt[j]}
-    const fe=dens[iFe]?sums[iFe]/dens[iFe]:0;
-    if(v===0){let sc;const nz=cur.reduce((a,b)=>a+(b?1:0),0);
-      if(O.obj==='maxFe')sc=-fe;else if(O.obj==='lowGrade')sc=fe;else if(O.obj==='few')sc=nz*100-fe;else sc=(dens[iSi]?sums[iSi]/dens[iSi]:0)+(dens[iAl]?sums[iAl]/dens[iAl]:0)-fe*1e-3;
-      push(bestM,{sc})}else push(nearM,{sc:v})};
-  const rec=(i,rem)=>{if(i===k-1){if(rem<lo[i]||rem>hi[i])return;add(i,rem);evalc();add(i,-rem);return}
-    for(let u=lo[i];u<=Math.min(hi[i],rem);u++){add(i,u);rec(i+1,rem-u);add(i,-u)}};
-  rec(0,U);const top=(M,m)=>[...M.values()].sort((a,b)=>a.sc-b.sc).slice(0,m);return{fs,step,best:top(bestM,5),near:top(nearM,3),n,A}}
-$('#blRun').onclick=()=>{const pk=S.blendPlant,p=PK(pk),{T,O}=blendCfg(pk);const t0=performance.now();const R=optimise(p,T,O);
-  if(R.err){$('#blRes').innerHTML=`<span class="vbad">${esc(R.err)}</span>`;return}
-  $('#blInfo').textContent=`${R.n.toLocaleString()} blends checked in ${Math.round(performance.now()-t0)} ms`;
-  const card=(b,i,ok)=>{const used=b.r.map((u,j)=>({f:R.fs[j],v:u*R.step})).filter(x=>x.v);
-    const cls=(a,j)=>{const g=b.g[j];if(T[a]==null||g==null)return'';return(a==='Fe'?g>=T[a]-1e-9:g<=T[a]+1e-9)?'vok':'vbad'};
-    const miss=R.A.map((a,j)=>{const g=b.g[j];if(T[a]==null||g==null)return'';if(a==='Fe'&&g<T[a])return`Fe short ${(T[a]-g).toFixed(2)}`;if(a!=='Fe'&&g>T[a])return`${a} over ${(g-T[a]).toFixed(DEC[a])}`;return''}).filter(Boolean).join(', ');
-    return `<div class="res${ok&&i===0?' best':''}"><div style="display:flex;justify-content:space-between;align-items:center"><b>Blend ${String.fromCharCode(65+i)}</b>${ok?'<span class="pill p-ok">Meets all targets</span>':`<span class="pill p-bad">${esc(miss)}</span>`}</div>
-     <div class="wrap" style="margin-top:6px"><table class="g"><tr>${used.map(x=>`<th>${esc(x.f.name)}</th>`).join('')}${R.A.map(a=>`<th style="background:#e8eef7">${a}</th>`).join('')}</tr>
-     <tr>${used.map(x=>`<td><b>${fmtR(x.v)}</b></td>`).join('')}${R.A.map((a,j)=>`<td class="${cls(a,j)}">${fmt(b.g[j],a)}</td>`).join('')}</tr></table></div>
-     <div class="bar" style="margin:8px 0 0"><button class="btn ${ok&&i===0?'pri':''} sm" data-use="${i}" data-ok="${ok?1:0}">Use this blend for ${esc(p.sh)}</button></div></div>`};
-  $('#blRes').innerHTML=(R.best.length?R.best.map((b,i)=>card(b,i,true)).join(''):`<div class="hint" style="margin-bottom:8px"><span class="vbad">No blend meets every target</span> with these faces. Closest options:</div>`+R.near.map((b,i)=>card(b,i,false)).join(''));
-  $('#blRes').onclick=e=>{const b=e.target.dataset.use;if(b==null)return;const L=e.target.dataset.ok==='1'?R.best:R.near,bl=L[+b];
-    const ps=S.plants[pk];const keep=Object.fromEntries(ps.rows.filter(r=>r.fid).map(r=>[r.fid,r.ov]));
-    ps.rows=bl.r.map((u,j)=>({fid:R.fs[j].id,ratio:u*R.step,ov:keep[R.fs[j].id]||{}})).filter(r=>r.ratio);save();renderBlend();msg(`Blend applied to ${p.n}`)}};
-
-/* ================= changes (option 5) ================= */
-function snap(st){const o={date:st.date,shift:st.shift,plants:{}};PL.forEach(p=>{const ps=st.plants[p.k]||{rows:[]};const c=calcS(st,p);
-  o.plants[p.k]={rows:ps.rows.filter(r=>r.fid&&r.ratio).map(r=>{const d=rowDataS(st,r,p);return{name:d.name,ratio:r.ratio,Fe:d.Fe,SiO2:d.SiO2,Al2O3:d.Al2O3}}),avg:c.avg,sr:c.sr}});return o}
+/* ================= saved-shift storage ================= */
 const H=()=>{try{return JSON.parse(localStorage.getItem(HKEY))||[]}catch(e){return[]}};
 const setH=h=>{try{localStorage.setItem(HKEY,JSON.stringify(h))}catch(e){msg('Could not save in this browser')}};
-function prevShift(d,s){const o=['A','B','C'],i=o.indexOf(s);if(i>0)return[d,o[i-1]];const x=new Date(d+'T00:00:00');x.setDate(x.getDate()-1);return[ymd(x),'C']}
-function diffPlant(p,base,now){const pr=(base.plants[p.k]||{rows:[]}).rows,nr=now.plants[p.k].rows;const names=[...new Set([...nr.map(r=>r.name),...pr.map(r=>r.name)])];
-  const items=names.map(n=>{const a=pr.find(r=>r.name===n),b=nr.find(r=>r.name===n);let kind;
-    if(a&&!b)kind='rem';else if(!a&&b)kind='new';else if(a.ratio!==b.ratio)kind=b.ratio>a.ratio?'up':'down';else kind='same';
-    const q=a&&b&&a.Fe!=null&&b.Fe!=null&&Math.abs(a.Fe-b.Fe)>=0.005?`Fe ${fmt(a.Fe,'Fe')}→${fmt(b.Fe,'Fe')}`:'';
-    return{n,a:a?a.ratio:0,b:b?b.ratio:0,kind,q}});
-  return{items,changed:items.some(i=>i.kind!=='same'||i.q),pa:(base.plants[p.k]||{}).avg||{},na:now.plants[p.k].avg}}
-function renderChanges(){const h=H();const [pd,ps]=prevShift(S.date,S.shift);
-  const opts=[];if(S.base)opts.push(`<option value="base">Carried-forward shift: ${esc(S.base.date)} ${esc(S.base.shift)}</option>`);
-  h.forEach((x,i)=>{if(x.s.date===S.date&&x.s.shift===S.shift)return;opts.push(`<option value="${i}">Saved: ${esc(x.s.date)} shift ${esc(x.s.shift)}${x.s.date===pd&&x.s.shift===ps?' (previous shift)':''}</option>`)});
-  const sel=$('#cgBase');const prevVal=sel.value;sel.innerHTML=opts.join('')||'<option value="">— nothing to compare yet —</option>';
-  if(prevVal&&[...sel.options].some(o=>o.value===prevVal))sel.value=prevVal;else{const i=h.findIndex(x=>x.s.date===pd&&x.s.shift===ps);if(!S.base&&i>=0)sel.value=String(i)}
-  drawChanges()}
-function baseSnap(){const v=$('#cgBase').value;if(v==='base')return S.base;if(v==='')return null;const x=H()[+v];return x?snap(fix(JSON.parse(JSON.stringify(x.s)))):null}
-function drawChanges(){const base=baseSnap(),B=$('#cgBody');
-  if(!base){B.innerHTML=`<div class="panel hint">Nothing to compare yet. In <b>Saved shifts</b>, press “Save this shift” at the end of each shift, or “Carry forward” to start the next one. The previous shift then appears here automatically.</div>`;return}
-  const now=snap(S);const ds=PL.map(p=>({p,...diffPlant(p,base,now)}));const ch=ds.filter(d=>d.changed),same=ds.filter(d=>!d.changed);
-  const kindCell=i=>({rem:'<span class="pill p-bad">removed</span>',new:'<span class="pill p-ok">new</span>',up:`<span class="pill p-ok">▲ ${fmtR(i.b-i.a)}</span>`,down:`<span class="pill p-warn">▼ ${fmtR(i.a-i.b)}</span>`,same:'<span class="hint">—</span>'})[i.kind]+(i.q?` <span class="pill p-mut">${i.q}</span>`:'');
-  const dv=(a,x,y)=>{if(x==null||y==null)return fmt(y,a);const d=y-x;return `${fmt(x,a)} → <b>${fmt(y,a)}</b>${Math.abs(d)>=10**-DEC[a]/2?` <span class="${(a==='Fe'?d>0:d<0)?'vok':'vbad'}">(${d>0?'+':''}${d.toFixed(DEC[a])})</span>`:''}`};
-  B.innerHTML=`<div class="wrap"><table class="g chg"><tr><th class="l">Plant</th><th class="l">Face</th><th>${esc(base.date)} ${esc(base.shift)}</th><th>${esc(S.date)} ${esc(S.shift)}</th><th>Change</th><th>Blend quality</th><th class="l" style="min-width:200px">Reason</th></tr>
-   ${ch.map(d=>{const n=d.items.length;return d.items.map((i,j)=>`<tr style="${i.kind==='rem'?'background:#fef2f2':i.kind==='new'?'background:#f0fdf4':''}">
-     ${j===0?`<td rowspan="${n}" class="l" style="background:${d.p.c};font-weight:700">${esc(d.p.n)}</td>`:''}<td class="l ${i.kind==='rem'?'strike':''}">${esc(i.n)}</td><td>${fmtR(i.a)||'0'}</td><td><b>${fmtR(i.b)||'0'}</b></td><td>${kindCell(i)}</td>
-     ${j===0?`<td rowspan="${n}" style="white-space:nowrap;font-size:12px;line-height:1.7">Fe ${dv('Fe',d.pa.Fe,d.na.Fe)}<br>SiO2 ${dv('SiO2',d.pa.SiO2,d.na.SiO2)}<br>Al2O3 ${dv('Al2O3',d.pa.Al2O3,d.na.Al2O3)}</td><td rowspan="${n}"><textarea class="reason" data-r="${d.p.k}" rows="3" placeholder="Why changed?">${esc(S.reasons[d.p.k]||'')}</textarea></td>`:''}</tr>`).join('')}).join('')||`<tr><td colspan="7" class="hint" style="padding:12px">No changes from ${esc(base.date)} ${esc(base.shift)}.</td></tr>`}
-   ${same.length&&ch.length?`<tr><td colspan="7" class="l hint">No change: ${same.map(d=>esc(d.p.sh)).join(', ')}</td></tr>`:''}</table></div>`;
-  B._data={base,ch,same}}
-$('#cgBase').onchange=drawChanges;
-$('#cgBody').addEventListener('input',e=>{const k=e.target.dataset.r;if(k){S.reasons[k]=e.target.value;save()}});
-function changesText(){const d=$('#cgBody')._data;if(!d)return'';const {base,ch,same}=d;
-  let t=`*Feed schedule changes – ${S.date} Shift ${S.shift}* (vs ${base.date} ${base.shift})\n`;
-  if(!ch.length)t+='\nNo changes.\n';
-  ch.forEach(x=>{const parts=x.items.filter(i=>i.kind!=='same'||i.q).map(i=>i.kind==='rem'?`${i.n} removed (was ${fmtR(i.a)}%)`:i.kind==='new'?`${i.n} added ${fmtR(i.b)}%`:i.kind==='same'?`${i.n} quality ${i.q}`:`${i.n} ${fmtR(i.a)}→${fmtR(i.b)}%`);
-    t+=`\n*${x.p.n}*: ${parts.join('; ')}\nBlend: ${x.p.an.slice(0,3).map(a=>`${a} ${fmt(x.pa[a],a)}→${fmt(x.na[a],a)}`).join(', ')}\n`;if(S.reasons[x.p.k])t+=`Reason: ${S.reasons[x.p.k]}\n`});
-  if(same.length&&ch.length)t+=`\nNo change: ${same.map(x=>x.p.sh).join(', ')}`;return t}
-$('#cgText').onclick=async()=>{const t=changesText();if(!t){msg('Nothing to copy');return}try{await navigator.clipboard.writeText(t);msg('Changes copied — paste into WhatsApp')}catch(e){$('#bkTxt').value=t;msg('Copy blocked — text placed in Saved shifts › backup box')}};
-function changesCanvas(){const d=$('#cgBody')._data;if(!d)return null;const {base,ch,same}=d;
-  const W=[150,140,70,70,110,230,260],RH=24,rows=[];
-  rows.push({h:1,c:['Plant','Face',`${base.date} ${base.shift}`,`${S.date} ${S.shift}`,'Change','Blend quality','Reason']});
-  ch.forEach(x=>x.items.forEach((i,j)=>rows.push({bg:i.kind==='rem'?'#fef2f2':i.kind==='new'?'#f0fdf4':'#fff',pc:x.p.c,first:j===0,last:j===x.items.length-1,
-    c:[j===0?x.p.sh:'',i.n,fmtR(i.a)||'0',fmtR(i.b)||'0',{rem:'removed',new:'new',up:'▲ '+fmtR(i.b-i.a),down:'▼ '+fmtR(i.a-i.b),same:'—'}[i.kind],
-      j===0?`Fe ${fmt(x.pa.Fe,'Fe')}→${fmt(x.na.Fe,'Fe')}`:j===1?`SiO2 ${fmt(x.pa.SiO2,'SiO2')}→${fmt(x.na.SiO2,'SiO2')}`:j===2?`Al2O3 ${fmt(x.pa.Al2O3,'Al2O3')}→${fmt(x.na.Al2O3,'Al2O3')}`:'',
-      j===0?(S.reasons[x.p.k]||''):''],strike:i.kind==='rem'})));
-  if(!ch.length)rows.push({c:['No changes','','','','','','']});
-  if(same.length&&ch.length)rows.push({c:['No change: '+same.map(x=>x.p.sh).join(', '),'','','','','',''],span:1});
-  const sc=2,Wt=W.reduce((a,b)=>a+b),H0=40,Hh=H0+rows.length*RH+12;const cv=document.createElement('canvas');cv.width=(Wt+20)*sc;cv.height=Hh*sc;const g=cv.getContext('2d');g.scale(sc,sc);
-  g.fillStyle='#fff';g.fillRect(0,0,Wt+20,Hh);g.fillStyle='#1d4e89';g.fillRect(0,0,Wt+20,32);g.fillStyle='#fff';g.font='bold 14px Arial';g.textBaseline='middle';g.fillText(`Feed schedule changes · ${S.date} Shift ${S.shift}  (vs ${base.date} ${base.shift})`,10,16);
-  rows.forEach((r,ri)=>{let x=10;const y=H0+ri*RH;if(r.span){g.fillStyle='#f8fafc';g.fillRect(x,y,Wt,RH);g.strokeStyle='#d0d5dd';g.strokeRect(x,y,Wt,RH);g.fillStyle='#6b7280';g.font='12px Arial';g.textAlign='left';g.fillText(r.c[0],x+6,y+RH/2);return}
-    r.c.forEach((t,ci)=>{const w=W[ci];g.fillStyle=r.h?'#eef1f5':ci===0&&r.pc?r.pc:r.bg||'#fff';g.fillRect(x,y,w,RH);g.strokeStyle='#d0d5dd';g.strokeRect(x,y,w,RH);
-      let fs=12;g.font=`${r.h||ci===0||ci===3?'bold ':''}${fs}px Arial`;while(g.measureText(t).width>w-8&&fs>8){fs-=.5;g.font=`${r.h||ci===0||ci===3?'bold ':''}${fs}px Arial`}
-      g.fillStyle=ci===4&&t==='removed'?'#b91c1c':ci===4&&(t==='new'||t.startsWith('▲'))?'#15803d':r.strike&&ci===1?'#9ca3af':'#111';g.textAlign=ci===1||ci>=5||ci===0?'left':'center';
-      g.fillText(t,g.textAlign==='left'?x+5:x+w/2,y+RH/2+.5);if(r.strike&&ci===1){const tw=g.measureText(t).width;g.fillRect(x+5,y+RH/2,tw,1)}x+=w})});
-  return cv}
-let chgBlob=null;
-$('#cgImgBtn').onclick=()=>{const cv=changesCanvas();if(!cv){msg('Nothing to draw');return}cv.toBlob(b=>{chgBlob=b;$('#chgImg').src=URL.createObjectURL(b);$('#cgImgP').style.display='block'},'image/png')};
-$('#cgDl').onclick=()=>chgBlob&&dl(chgBlob,`Schedule_Changes_${S.date}_${S.shift}.png`);
-$('#cgShare').onclick=()=>chgBlob&&share(chgBlob,`Schedule_Changes_${S.date}_${S.shift}.png`);
 
 /* ================= output ================= */
 const C=(t,o={})=>({t:t??'',s:o.s||1,bg:o.bg||'',b:!!o.b,c:o.c||'',nb:!!o.nb,d:o.d});
@@ -934,7 +786,7 @@ function block(p){const n=3+p.an.length,st=S.plants[p.k],bg=p.c,rows=[];
   for(let i=used.length;i<4;i++)rows.push(Array.from({length:n},()=>C('')));
   const c=calc(p);
   rows.push([C('Total/Avg =',{s:2,b:1,bg}),C(c.used?fmtR(c.sr):'',{b:1,bg,c:c.used&&!ratioOK(c)?'#c00000':''}),...p.an.map(a=>C(fmt(c.avg[a],a),{b:1,bg,d:DEC[a]}))]);
-  if(p.alt)rows.push([C('Alternate Face',{s:2,b:1}),C(st.alt,{s:n-2,b:1,c:'#e00000'})]);
+  const at=altText(p.k);if(p.alt||at)rows.push([C(altLabel(p.k),{s:2,b:1}),C(at,{s:n-2,b:1,c:'#e00000'})]);
   rows.push([C('',{s:n,nb:1})]);return rows}
 function model(){const L=[[C('NRD In-charge',{s:2,b:1}),C((S.inc||'').toUpperCase(),{s:6,b:1})],[C('Departmental Plant',{s:8,b:1,bg:'#fff2cc'})]];
   const R=[[C('',{s:7,nb:1})],[C('Out Sourced Plant',{s:7,b:1,bg:'#fff2cc'})]];
@@ -980,14 +832,13 @@ $('#imgCopy').onclick=async()=>{try{const b=lastBlob||await getBlob();await navi
 
 /* ================= history ================= */
 function renderHist(){const h=H();$('#histT tbody').innerHTML=h.map((x,i)=>`<tr><td>${esc(x.s.date)}</td><td><b>${esc(x.s.shift)}</b></td><td>${esc(x.s.inc)}</td><td class="hint">${esc(x.at)}</td>
-  <td><button class="btn sm" data-ld="${i}">Load</button> <button class="btn sm" data-cmp="${i}">Compare</button> <button class="x" data-dl="${i}">✕</button></td></tr>`).join('')||`<tr><td colspan="5" class="hint" style="padding:14px">Nothing saved yet.</td></tr>`}
+  <td><button class="btn sm" data-ld="${i}">Load</button> <button class="x" data-dl="${i}">✕</button></td></tr>`).join('')||`<tr><td colspan="5" class="hint" style="padding:14px">Nothing saved yet.</td></tr>`}
 function saveShift(){const h=H().filter(x=>!(x.s.date===S.date&&x.s.shift===S.shift));const c=JSON.parse(JSON.stringify(S));delete c.base;h.unshift({at:new Date().toLocaleString(),s:c});setH(h.slice(0,90))}
 $('#hSave').onclick=()=>{saveShift();renderHist();msg(`Saved ${S.date} shift ${S.shift}`)};
 $('#histT').onclick=e=>{const h=H(),t=e.target;
   if(t.dataset.ld){const keepBH=S.mapCfg;S=fix(JSON.parse(JSON.stringify(h[+t.dataset.ld].s)));S.mapCfg=keepBH;save();syncHeader();msg(`Loaded ${S.date} ${S.shift}`);showTab('plants')}
-  if(t.dataset.cmp){S.base=snap(fix(JSON.parse(JSON.stringify(h[+t.dataset.cmp].s))));save();showTab('changes');$('#cgBase').value='base';drawChanges()}
   if(t.dataset.dl){h.splice(+t.dataset.dl,1);setH(h);renderHist()}};
-$('#hNext').onclick=()=>{saveShift();S.base=snap(S);S.reasons={};const o=['A','B','C'],i=o.indexOf(S.shift);
+$('#hNext').onclick=()=>{saveShift();const o=['A','B','C'],i=o.indexOf(S.shift);
   if(i===2){const d=new Date(S.date+'T00:00:00');d.setDate(d.getDate()+1);S.date=ymd(d);S.shift='A'}else S.shift=o[i+1];
   save();syncHeader();msg(`Now on ${S.date} shift ${S.shift} — plan carried forward`);showTab('plants')};
 $('#bkOut').onclick=()=>{$('#bkTxt').value=JSON.stringify({state:S,hist:H()});$('#bkTxt').select()};

@@ -177,14 +177,16 @@ textarea{width:100%;font-family:Consolas,monospace;font-size:12px;border:1px sol
     <span id="cfNN"><input class="inp" id="cfN" type="number" min="1" style="width:56px"> holes, max <input class="inp" id="cfMax" type="number" min="1" style="width:60px"> m</span>
     <span id="cfR">radius <input class="inp" id="cfRad" type="number" min="1" style="width:60px"> m</span>
     <select class="inp" id="cfW"><option value="mean">Simple average</option><option value="idw">Inverse-distance weighted</option></select>
+    <span class="hint">Colour holes by</span><select class="inp" id="cfCol"><option value="mat">Material (as ROM app)</option><option value="fe">Fe grade</option></select>
+    <label class="hint"><input type="checkbox" id="cfLineTap"> tap lines as faces</label>
     <span class="hint">Tap the map at a face — or tap a face line — to get its quality.</span>
   </div>
   <div class="mapwrap">
     <div id="mapBox"></div>
     <div id="mapPanel" class="panel"><h3>How to use</h3>
       <ol class="hint" style="padding-left:18px;line-height:1.6;margin:0">
-        <li>Load the latest Blasthole Map (KML/KMZ). Holes show coloured by Fe.</li>
-        <li>Optionally add a face-string KML (tick “add to loaded”). Lines become tappable.</li>
+        <li>Load the latest Blasthole Map (KML/KMZ). Holes show coloured by material, as in the ROM Quality Monitoring app (switch to Fe if you like).</li>
+        <li>Bench / face strings in the file are drawn as thin lines. Tick “tap lines as faces” to pick a whole face along a line.</li>
         <li>Tap a face on the map. Nearby holes are ringed and their average quality shows here.</li>
         <li>Name it, save it to inventory, and add it straight to a plant.</li>
       </ol></div>
@@ -329,6 +331,10 @@ const num=v=>{if(v===''||v==null)return null;const x=parseFloat(String(v).replac
 const fmt=(v,a)=>{if(v==null||isNaN(v))return'';const m=10**DEC[a];return(Math.round(Number(v)*m+1e-7)/m).toFixed(DEC[a])};
 const rnd=(v,a)=>v==null?null:Math.round(v*10**DEC[a]+1e-7)/10**DEC[a];
 const fmtR=v=>v==null?'':(Math.round(v*100)/100).toString();
+const MATC={DR:'#0000ff',W1:'#00ff00',W2:'#ffff00',BHJ:'#ff69b4',OB:'#ff69b4',HO:'#ff0000',SG:'#00ffff'};
+const matBase=m=>String(m||'').toUpperCase().replace(/P$/,'');
+const isP=m=>/^(DR|W1|W2|BHJ|OB|HO|SG)P$/i.test(String(m||''));
+const matCol=h=>h.col||MATC[matBase(h.mat)]||'#808080';
 const feCol=fe=>fe==null?'#9ca3af':fe>=64?'#15803d':fe>=62?'#d97706':fe>=60?'#dc2626':'#7c3aed';
 function msg(t){const m=$('#msg');m.textContent=t;m.classList.add('on');clearTimeout(m._t);m._t=setTimeout(()=>m.classList.remove('on'),2800)}
 function today(){const d=new Date();return ymd(d)}
@@ -351,7 +357,7 @@ function seedInv(){return [
 const blankRows=(n=3)=>Array.from({length:n},()=>({fid:'',ratio:null,ov:{}}));
 function defState(){const p={};PL.forEach(x=>p[x.k]={rows:blankRows(),alt:''});return{date:today(),shift:guessShift(),inc:'',inv:seedInv(),plants:p}}
 function fix(s){PL.forEach(x=>{if(!s.plants[x.k])s.plants[x.k]={rows:blankRows(),alt:''}});
-  s.targets=s.targets||{};s.opt=s.opt||{};s.reasons=s.reasons||{};s.mapCfg=Object.assign({method:'nn',n:6,maxd:60,r:25,w:'mean'},s.mapCfg||{});s.base=s.base||null;s.blendPlant=s.blendPlant||'wet';return s}
+  s.targets=s.targets||{};s.opt=s.opt||{};s.reasons=s.reasons||{};s.mapCfg=Object.assign({method:'nn',n:6,maxd:60,r:25,w:'mean',col:'mat',lineTap:false},s.mapCfg||{});s.base=s.base||null;s.blendPlant=s.blendPlant||'wet';return s}
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.inv&&s.plants)return s}catch(e){}return null}
 let S=fix(load()||defState());
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
@@ -421,7 +427,8 @@ $('#pasteAppend').onclick=()=>doPaste(false);$('#pasteReplace').onclick=()=>doPa
 let MAP=null,LG={},SEL=null,BH=loadBH();
 function loadBH(){try{return JSON.parse(localStorage.getItem(BKEY))||{holes:[],lines:[]}}catch(e){return{holes:[],lines:[]}}}
 function saveBH(){try{localStorage.setItem(BKEY,JSON.stringify(BH))}catch(e){msg('File too large to keep in this browser — reload it next time')}}
-function syncCfg(){const c=S.mapCfg;$('#cfMethod').value=c.method;$('#cfN').value=c.n;$('#cfMax').value=c.maxd;$('#cfRad').value=c.r;$('#cfW').value=c.w;$('#cfNN').style.display=c.method==='nn'?'':'none';$('#cfR').style.display=c.method==='rad'?'':'none'}
+function syncCfg(){const c=S.mapCfg;$('#cfCol').value=c.col;$('#cfLineTap').checked=!!c.lineTap;$('#cfMethod').value=c.method;$('#cfN').value=c.n;$('#cfMax').value=c.maxd;$('#cfRad').value=c.r;$('#cfW').value=c.w;$('#cfNN').style.display=c.method==='nn'?'':'none';$('#cfR').style.display=c.method==='rad'?'':'none'}
+['cfCol','cfLineTap'].forEach(id=>$('#'+id).addEventListener('change',()=>{S.mapCfg.col=$('#cfCol').value;S.mapCfg.lineTap=$('#cfLineTap').checked;save();drawBH(false)}));
 ['cfMethod','cfN','cfMax','cfRad','cfW'].forEach(id=>$('#'+id).addEventListener('change',()=>{const c=S.mapCfg;c.method=$('#cfMethod').value;c.n=Math.max(1,num($('#cfN').value)||6);c.maxd=Math.max(1,num($('#cfMax').value)||60);c.r=Math.max(1,num($('#cfRad').value)||25);c.w=$('#cfW').value;save();syncCfg();if(SEL&&SEL.g)pickAt(SEL.g,SEL.name)}));
 function updBhInfo(){$('#bhInfo').innerHTML=BH.holes.length||BH.lines.length?`<b>${BH.holes.length}</b> holes${BH.lines.length?`, ${BH.lines.length} lines`:''} · ${esc(BH.file||'')}${BH.nog?` · <span style="color:#b45309">${BH.nog} without Fe skipped</span>`:''}`:'No blasthole file loaded'}
 function initMap(){syncCfg();updBhInfo();
@@ -434,15 +441,21 @@ function initMap(){syncCfg();updBhInfo();
   L.control.scale({imperial:false}).addTo(MAP);
   MAP.createPane('linesPane').style.zIndex=450;LG.svg=L.svg({pane:'linesPane'});
   ['lines','bh','sel','inv'].forEach(k=>LG[k]=L.layerGroup().addTo(MAP));
-  const lg=L.control({position:'bottomleft'});lg.onAdd=()=>{const d=L.DomUtil.create('div','legend');d.innerHTML='<b>Hole Fe</b><i style="background:#15803d"></i>≥64<i style="background:#d97706"></i>62–64<i style="background:#dc2626"></i>60–62<i style="background:#7c3aed"></i>&lt;60';return d};lg.addTo(MAP);
+  const lg=L.control({position:'bottomleft'});lg.onAdd=()=>{LG.leg=L.DomUtil.create('div','legend');return LG.leg};lg.addTo(MAP);
   MAP.on('click',e=>pickAt({type:'pt',lat:e.latlng.lat,lon:e.latlng.lng}));
   drawBH(true);drawInvPins();setTimeout(()=>MAP.invalidateSize(),80);
 }
-function drawBH(fit){if(!MAP)return;LG.bh.clearLayers();LG.lines.clearLayers();
-  BH.lines.forEach(ln=>{const o={pane:'linesPane',renderer:LG.svg};L.polyline(ln.coords,{...o,color:'#fff',weight:4,opacity:.9,dashArray:'7 5',interactive:false}).addTo(LG.lines);
-    L.polyline(ln.coords,{...o,color:'#000',weight:18,opacity:0}).bindTooltip(esc(ln.name||'Face line'),{sticky:true}).on('click',ev=>{L.DomEvent.stopPropagation(ev);pickAt({type:'line',coords:ln.coords},ln.name)}).addTo(LG.lines)});
-  BH.holes.forEach(h=>{L.circleMarker([h.lat,h.lon],{radius:5,color:'#fff',weight:1,fillColor:feCol(h.Fe),fillOpacity:.95})
-    .bindTooltip(`<b>${esc(h.id||'')}</b> ${esc(h.mat||'')}<br>Fe ${fmt(h.Fe,'Fe')} · SiO2 ${fmt(h.SiO2,'SiO2')} · Al2O3 ${fmt(h.Al2O3,'Al2O3')}${h.P!=null?' · P '+fmt(h.P,'P'):''}`).addTo(LG.bh)});
+function legendHTML(){if(S.mapCfg.col==='fe')return'<b>Hole Fe</b><i style="background:#15803d"></i>≥64<i style="background:#d97706"></i>62–64<i style="background:#dc2626"></i>60–62<i style="background:#7c3aed"></i>&lt;60';
+  const cnt={};BH.holes.forEach(h=>{const b=matBase(h.mat)||'Other';cnt[b]=(cnt[b]||0)+1});const order=['DR','W1','W2','BHJ','OB','HO','SG'];
+  const ks=Object.keys(cnt).sort((a,b)=>(order.indexOf(a)+1||99)-(order.indexOf(b)+1||99));
+  return '<b>Material</b>'+ks.map(k=>`<i style="background:${MATC[k]||'#808080'};border:1px solid #333"></i>${esc(k)} ${cnt[k]}`).join('')+(BH.holes.some(h=>isP(h.mat))?'<br><i style="background:#fff;border:3px solid #000"></i>ring = high-P (…P)':'')}
+function drawBH(fit){if(!MAP)return;LG.bh.clearLayers();LG.lines.clearLayers();if(LG.leg)LG.leg.innerHTML=BH.holes.length?legendHTML():'';
+  const tap=S.mapCfg.lineTap;
+  BH.lines.forEach(ln=>{const o={pane:'linesPane',renderer:LG.svg};L.polyline(ln.coords,{...o,color:ln.col||'#ffffff',weight:tap?2.5:1.5,opacity:.85,interactive:false}).addTo(LG.lines);
+    if(tap)L.polyline(ln.coords,{...o,color:'#000',weight:14,opacity:0}).bindTooltip(esc(ln.name||'Face line'),{sticky:true}).on('click',ev=>{L.DomEvent.stopPropagation(ev);pickAt({type:'line',coords:ln.coords},ln.name)}).addTo(LG.lines)});
+  const byMat=S.mapCfg.col!=='fe';
+  BH.holes.forEach(h=>{const p=isP(h.mat);L.circleMarker([h.lat,h.lon],{radius:p?6:5.5,color:p?'#000':'#222',weight:p?3:1,fillColor:byMat?matCol(h):feCol(h.Fe),fillOpacity:.95})
+    .bindTooltip(`<b>${esc(h.mat||'')}</b> ${esc(h.id||'')}<br>Fe ${fmt(h.Fe,'Fe')} · SiO2 ${fmt(h.SiO2,'SiO2')} · Al2O3 ${fmt(h.Al2O3,'Al2O3')}${h.P!=null?' · P '+fmt(h.P,'P'):''}`).addTo(LG.bh)});
   if(fit){const pts=[...BH.holes.map(h=>[h.lat,h.lon]),...BH.lines.flatMap(l=>l.coords)];if(pts.length)MAP.fitBounds(pts,{padding:[30,30],maxZoom:18})}
 }
 function drawInvPins(){if(!MAP)return;LG.inv.clearLayers();S.inv.filter(f=>f.lat!=null).forEach(f=>{
@@ -473,6 +486,7 @@ function getAttrs(pm){const o={};
       else rows.forEach(r=>{for(let i=0;i+1<r.length;i+=2)if(!(r[i] in o))o[r[i]]=r[i+1]})}
     else{desc.replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,' ').split(/\n|;|\|/).forEach(l=>{const m=l.match(/^\s*([^:=]{1,30}?)\s*[:=]\s*(.+?)\s*$/);if(m&&!(m[1] in o))o[m[1]]=m[2]})}}
   return o}
+const kmlCol=c=>{c=(c||'').trim();if(!/^[0-9a-f]{8}$/i.test(c))return'';return'#'+c.slice(6,8)+c.slice(4,6)+c.slice(2,4)};
 function mapAttrs(o,name){const h={id:name||'',mat:''};
   for(const [k0,v] of Object.entries(o)){const k=k0.toLowerCase().replace(/[^a-z0-9]/g,'');
     if(/^t?fe(pct|percent|per|grade|avg)?$/.test(k))h.Fe=num(v);
@@ -482,13 +496,18 @@ function mapAttrs(o,name){const h={id:name||'',mat:''};
     else if(/^(k2o|k20)/.test(k))h.K2O=num(v);
     else if(/^(hole|holeid|holeno|holename|bh|bhid|bhno|bhname|id|no)$/.test(k)&&v)h.id=v;
     else if(/^(mat|material|materialtype|mattype|type|rocktype|oretype|lith|lithology|class|category)$/.test(k))h.mat=v}
-  AN.forEach(a=>{if(h[a]===undefined)h[a]=null});return h}
+  AN.forEach(a=>{if(h[a]===undefined)h[a]=null});
+  // BH2KMZ / ROM app style: name = "Fe-SiO2-Al2O3-P_MAT"  e.g. 67-0.9-1.1-0.03_HO
+  const m=String(name||'').trim().match(/^([\d.]+)\s*[-|\/]\s*([\d.]+)\s*[-|\/]\s*([\d.]+)(?:\s*[-|\/]\s*([\d.]+))?(?:\s*[-|\/]\s*([\d.]+))?\s*(?:[_\s]+([A-Za-z][A-Za-z0-9]*))?$/);
+  if(m&&h.Fe==null){h.Fe=num(m[1]);h.SiO2=num(m[2]);h.Al2O3=num(m[3]);if(m[4]!=null)h.P=num(m[4]);if(m[5]!=null)h.K2O=num(m[5]);if(m[6]&&!h.mat)h.mat=m[6].toUpperCase();if(h.id===name)h.id=''}
+  return h}
 function parseKML(t){const d=new DOMParser().parseFromString(t,'text/xml');const out={holes:[],lines:[],nog:0};
-  for(const pm of TG(d,'Placemark')){const name=TX(pm,'name');
+  const st={};for(const s of TG(d,'Style')){const id=s.getAttribute('id');if(!id)continue;const ic=TG(s,'IconStyle')[0],lc=TG(s,'LineStyle')[0];st['#'+id]={icon:ic?kmlCol(TX(ic,'color')):'',line:lc?kmlCol(TX(lc,'color')):''}}
+  for(const pm of TG(d,'Placemark')){const name=TX(pm,'name');const sty=st[TX(pm,'styleUrl')]||{};
     const pt=TG(pm,'Point')[0];
-    if(pt){const c=parseCoords(TX(pt,'coordinates'))[0];if(!c)continue;const h=mapAttrs(getAttrs(pm),name);h.lat=c[0];h.lon=c[1];if(h.Fe!=null)out.holes.push(h);else out.nog++;continue}
+    if(pt){const c=parseCoords(TX(pt,'coordinates'))[0];if(!c)continue;const h=mapAttrs(getAttrs(pm),name);h.lat=c[0];h.lon=c[1];if(sty.icon&&!MATC[matBase(h.mat)])h.col=sty.icon;if(h.Fe!=null)out.holes.push(h);else out.nog++;continue}
     const ls=TG(pm,'LineString')[0]||TG(pm,'LinearRing')[0];
-    if(ls){const cs=parseCoords(TX(ls,'coordinates'));if(cs.length)out.lines.push({name,coords:cs})}}
+    if(ls){const cs=parseCoords(TX(ls,'coordinates'));if(cs.length)out.lines.push({name:name||TX(pm,'description')&&('String '+TX(pm,'description'))||'',coords:cs.map(c=>[+c[0].toFixed(7),+c[1].toFixed(7)]),col:sty.line||''})}}
   return out}
 
 /* face pick */

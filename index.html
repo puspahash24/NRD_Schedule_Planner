@@ -66,15 +66,40 @@ textarea{width:100%;font-family:Consolas,monospace;font-size:12px;border:1px sol
 #msg.on{opacity:.95}
 #imgPrev,#chgImg{max-width:100%;border:1px solid var(--bd);background:#fff}
 #xl{overflow:auto;background:#fff;border:1px solid var(--bd);padding:8px}
-/* map */
-.mapwrap{display:grid;grid-template-columns:1fr 350px;gap:12px}
-#mapBox{height:70vh;border-radius:6px;border:1px solid var(--bd);background:#2b2b2b}
-#mapPanel{margin:0;max-height:70vh;overflow:auto}
-@media(max-width:860px){.mapwrap{grid-template-columns:1fr}#mapBox{height:56vh}#mapPanel{max-height:none}}
+/* map — same look and behaviour as ROM Quality Monitoring */
+.mapwrap{display:grid;grid-template-columns:1fr 380px;gap:12px}
+#mapHold{position:relative;--card:#fff;--ink:#1b2a30;--line:#cfd6d4;--bg:#edeeea;--acc:#1d4e89;--acc-ink:#fff}
+#mapBox{height:72vh;min-height:300px;border-radius:6px;border:1px solid var(--bd);background:#2b2b2b}
+#mapHold.full{position:fixed;inset:0;z-index:2000;border-radius:0}
+#mapHold.full #mapBox{height:100vh;height:100dvh;border-radius:0;border:0}
+#fsBar{display:none;position:absolute;left:8px;right:8px;bottom:10px;z-index:1000;background:#fff;color:#1b2a30;border:1px solid #cfd6d4;border-radius:8px;padding:7px 10px;font-size:13px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.35);font-weight:600}
+#mapHold.full #fsBar{display:block}
+#mapPanel{margin:0;max-height:72vh;overflow:auto}
+@media(max-width:860px){.mapwrap{grid-template-columns:1fr}#mapBox{height:52vh}#mapPanel{max-height:none}}
+#mapBox.nolbl .lbl{display:none}
+.lbl{background:none;border:0;box-shadow:none;color:#fff;font-size:11px;font-weight:600;padding:0;text-shadow:0 0 3px #000,0 0 3px #000,0 0 2px #000}
+.lbl::before{display:none}
+.custom-pin-icon{background:transparent;border:none}
+.leaflet-control{opacity:.8;transition:opacity .2s}.leaflet-control:hover,.leaflet-control:focus-within{opacity:1}
+.leaflet-bar,.leaflet-touch .leaflet-bar{border:1px solid var(--line)!important;border-radius:6px;box-shadow:none;background:none}
+.leaflet-bar a,.leaflet-touch .leaflet-bar a{background-color:var(--card)!important;color:var(--ink)!important;border-bottom-color:var(--line)!important}
+.leaflet-bar a.ico-btn,.leaflet-touch .leaflet-bar a.ico-btn{width:36px;height:36px;line-height:0;padding:0;display:flex!important;align-items:center;justify-content:center;position:relative;cursor:pointer}
+.leaflet-bar a.ico-btn.on{background-color:var(--acc)!important;color:var(--acc-ink)!important}
+.opt-bar{position:relative}
+.opt-pop{position:absolute;right:calc(100% + 6px);display:flex;align-items:center;gap:6px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px 8px;font:600 12px system-ui,Segoe UI,sans-serif;white-space:nowrap;z-index:10}
+.opt-pop[hidden]{display:none}
+.opt-pop input{width:54px;font:inherit;padding:4px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);text-align:center}
+.opt-pop button{width:28px;height:28px;padding:0;font-size:16px;line-height:1;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;cursor:pointer}
+.bdg{position:absolute;right:2px;bottom:1px;font:700 9px system-ui,sans-serif;line-height:1;color:var(--ink);background:var(--card);border-radius:3px;padding:1px 2px}
+.tip{position:absolute;left:calc(100% + 6px);top:50%;transform:translateY(-50%);background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 9px;font:600 12px system-ui,Segoe UI,sans-serif;white-space:nowrap;pointer-events:none;z-index:10;line-height:1.2}
+.tip.tl{left:auto;right:calc(100% + 6px)}
+.leaflet-top.leaflet-center{left:50%;right:auto;transform:translateX(-50%);display:flex;justify-content:center;width:max-content}
+.leaflet-control-scale-line{background:rgba(255,255,255,.88);color:#111;font:700 12px system-ui,sans-serif;border:2px solid #111;border-top:0;padding:1px 6px}
+.q4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;margin:6px 0}
+.q4 div{background:#eef1f5;border-radius:6px;padding:8px 2px}.q4 b{display:block;font-size:20px}.q4 span{font-size:12px;color:var(--mut)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;border:1px solid rgba(0,0,0,.35)}
 .fpin{white-space:nowrap;color:#fff;font-weight:700;font-size:12px;text-shadow:0 0 3px #000,0 0 3px #000}
 .fpin span{display:inline-block;width:14px;height:14px;border-radius:3px;border:2px solid #fff;vertical-align:-3px;margin-right:4px}
-.legend{background:#fffe;padding:6px 9px;border-radius:5px;font-size:11.5px;line-height:1.6}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 3px 0 6px}
 .chips{display:flex;flex-wrap:wrap;gap:5px}
 .chip{background:#eef1f5;border-radius:12px;padding:2px 9px;font-size:12px}
 .frm{display:grid;grid-template-columns:90px 1fr;gap:6px 8px;align-items:center;margin:10px 0}
@@ -165,31 +190,17 @@ textarea{width:100%;font-family:Consolas,monospace;font-size:12px;border:1px sol
 <!-- MAP -->
 <section class="tab" id="t-map">
   <div class="bar">
-    <label class="btn pri" style="cursor:pointer">Load Blasthole KML/KMZ<input type="file" id="bhFile" accept=".kml,.kmz" multiple hidden></label>
-    <label class="hint"><input type="checkbox" id="bhAdd"> add to loaded (e.g. face string file)</label>
+    <label class="btn pri" style="cursor:pointer">Upload KML / KMZ<input type="file" id="bhFile" accept=".kml,.kmz" hidden></label>
     <span id="bhInfo" class="hint"></span>
-    <button class="btn" id="bhLoc">📍 Face at my location</button>
-    <button class="btn" id="bhClr">Clear blastholes</button>
   </div>
   <div class="bar">
-    <span class="hint">Quality from:</span>
-    <select class="inp" id="cfMethod"><option value="nn">Nearest holes</option><option value="rad">All holes within radius</option></select>
-    <span id="cfNN"><input class="inp" id="cfN" type="number" min="1" style="width:56px"> holes, max <input class="inp" id="cfMax" type="number" min="1" style="width:60px"> m</span>
-    <span id="cfR">radius <input class="inp" id="cfRad" type="number" min="1" style="width:60px"> m</span>
-    <select class="inp" id="cfW"><option value="mean">Simple average</option><option value="idw">Inverse-distance weighted</option></select>
-    <span class="hint">Colour holes by</span><select class="inp" id="cfCol"><option value="mat">Material (as ROM app)</option><option value="fe">Fe grade</option></select>
-    <label class="hint"><input type="checkbox" id="cfLineTap"> tap lines as faces</label>
-    <span class="hint">Tap the map at a face — or tap a face line — to get its quality.</span>
+    <label class="hint"><input type="checkbox" id="bhLbl"> Show hole IDs (zoom in to see them)</label>
+    <label class="hint"><input type="checkbox" id="bhW"> Weight by distance</label>
+    <span class="hint">Drag the excavator to the loading unit, or tap the map. Quality updates as you move it. Map buttons: full screen, lock, GPS, pin at my GPS, drop pin; right side: nearest holes and max distance.</span>
   </div>
   <div class="mapwrap">
-    <div id="mapBox"></div>
-    <div id="mapPanel" class="panel"><h3>How to use</h3>
-      <ol class="hint" style="padding-left:18px;line-height:1.6;margin:0">
-        <li>Load the latest Blasthole Map (KML/KMZ). Holes show coloured by material, as in the ROM Quality Monitoring app (switch to Fe if you like).</li>
-        <li>Bench / face strings in the file are drawn as thin lines. Tick “tap lines as faces” to pick a whole face along a line.</li>
-        <li>Tap a face on the map. Nearby holes are ringed and their average quality shows here.</li>
-        <li>Name it, save it to inventory, and add it straight to a plant.</li>
-      </ol></div>
+    <div id="mapHold"><div id="mapBox"></div><div id="fsBar">Tap the map to place the loading unit</div></div>
+    <div id="mapPanel" class="panel"></div>
   </div>
 </section>
 
@@ -331,10 +342,6 @@ const num=v=>{if(v===''||v==null)return null;const x=parseFloat(String(v).replac
 const fmt=(v,a)=>{if(v==null||isNaN(v))return'';const m=10**DEC[a];return(Math.round(Number(v)*m+1e-7)/m).toFixed(DEC[a])};
 const rnd=(v,a)=>v==null?null:Math.round(v*10**DEC[a]+1e-7)/10**DEC[a];
 const fmtR=v=>v==null?'':(Math.round(v*100)/100).toString();
-const MATC={DR:'#0000ff',W1:'#00ff00',W2:'#ffff00',BHJ:'#ff69b4',OB:'#ff69b4',HO:'#ff0000',SG:'#00ffff'};
-const matBase=m=>String(m||'').toUpperCase().replace(/P$/,'');
-const isP=m=>/^(DR|W1|W2|BHJ|OB|HO|SG)P$/i.test(String(m||''));
-const matCol=h=>h.col||MATC[matBase(h.mat)]||'#808080';
 const feCol=fe=>fe==null?'#9ca3af':fe>=64?'#15803d':fe>=62?'#d97706':fe>=60?'#dc2626':'#7c3aed';
 function msg(t){const m=$('#msg');m.textContent=t;m.classList.add('on');clearTimeout(m._t);m._t=setTimeout(()=>m.classList.remove('on'),2800)}
 function today(){const d=new Date();return ymd(d)}
@@ -357,7 +364,7 @@ function seedInv(){return [
 const blankRows=(n=3)=>Array.from({length:n},()=>({fid:'',ratio:null,ov:{}}));
 function defState(){const p={};PL.forEach(x=>p[x.k]={rows:blankRows(),alt:''});return{date:today(),shift:guessShift(),inc:'',inv:seedInv(),plants:p}}
 function fix(s){PL.forEach(x=>{if(!s.plants[x.k])s.plants[x.k]={rows:blankRows(),alt:''}});
-  s.targets=s.targets||{};s.opt=s.opt||{};s.reasons=s.reasons||{};s.mapCfg=Object.assign({method:'nn',n:6,maxd:60,r:25,w:'mean',col:'mat',lineTap:false},s.mapCfg||{});s.base=s.base||null;s.blendPlant=s.blendPlant||'wet';return s}
+  s.targets=s.targets||{};s.opt=s.opt||{};s.reasons=s.reasons||{};s.mapCfg=Object.assign({k:3,R:15,w:true,lbl:true},s.mapCfg||{});if(typeof s.mapCfg.w!=='boolean')s.mapCfg.w=true;s.base=s.base||null;s.blendPlant=s.blendPlant||'wet';return s}
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.inv&&s.plants)return s}catch(e){}return null}
 let S=fix(load()||defState());
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
@@ -406,7 +413,7 @@ function renderInv(){renderDL();
 $('#invT').addEventListener('input',e=>{const tr=e.target.closest('tr'),f=inv(tr?.dataset.id),k=e.target.dataset.f;if(!f||!k||e.target.tagName==='SELECT')return;f[k]=AN.includes(k)?num(e.target.value):e.target.value;save();if(k==='name')renderDL()});
 $('#invT').addEventListener('change',e=>{const tr=e.target.closest('tr'),f=inv(tr?.dataset.id),k=e.target.dataset.f;if(f&&k&&e.target.tagName==='SELECT'){f[k]=e.target.value;save()}});
 $('#invT').addEventListener('click',e=>{const tr=e.target.closest('tr');if(!tr)return;const id=tr.dataset.id,f=inv(id);
-  if(e.target.hasAttribute('data-go')){showTab('map');setTimeout(()=>{if(MAP){MAP.setView([f.lat,f.lon],Math.max(MAP.getZoom(),17));faceInfo(id)}},150);return}
+  if(e.target.hasAttribute('data-go')){showTab('map');setTimeout(()=>{if(MAP){MAP.setView([f.lat,f.lon],Math.max(MAP.getZoom(),18));faceInfo(id)}},150);return}
   if(!e.target.hasAttribute('data-del'))return;
   const used=PL.filter(p=>S.plants[p.k].rows.some(r=>r.fid===id)).map(p=>p.sh);
   const go=()=>{S.inv=S.inv.filter(x=>x.id!==id);PL.forEach(p=>{S.plants[p.k].rows=S.plants[p.k].rows.filter(r=>r.fid!==id)});save();renderInv()};
@@ -423,150 +430,295 @@ function doPaste(replace){const rows=parsePaste($('#pasteTxt').value);if(!rows.l
   save();renderInv();$('#pasteTxt').value='';$('#pastePanel').style.display='none';msg(`${rows.length} faces ${replace?'loaded':'added'}`)}
 $('#pasteAppend').onclick=()=>doPaste(false);$('#pasteReplace').onclick=()=>doPaste(true);
 
-/* ================= blasthole map ================= */
-let MAP=null,LG={},SEL=null,BH=loadBH();
+/* ================= blasthole map (same behaviour as ROM Quality Monitoring) ================= */
+const TYPES={DR:'#2563eb',W1:'#16a34a',SG:'#06b6d4',HO:'#dc2626',BHJ:'#ec4899',OB:'#ec4899',W2:'#eab308'};
+const tcol=t=>TYPES[t]||TYPES[String(t||'').toUpperCase().replace(/P$/,'')]||'#808080';
+let MAP=null,LG={},PIN=null,RING=null,LAST=null,LOCK=false,ME=null,WATCH=null,GPS=null,PINFIX=false,RES=null,BH=loadBH(),lockBtn=null,fsBtn=null,ctlTs=0,nameTouched=false;
 function loadBH(){try{return JSON.parse(localStorage.getItem(BKEY))||{holes:[],lines:[]}}catch(e){return{holes:[],lines:[]}}}
-function saveBH(){try{localStorage.setItem(BKEY,JSON.stringify(BH))}catch(e){msg('File too large to keep in this browser — reload it next time')}}
-function syncCfg(){const c=S.mapCfg;$('#cfCol').value=c.col;$('#cfLineTap').checked=!!c.lineTap;$('#cfMethod').value=c.method;$('#cfN').value=c.n;$('#cfMax').value=c.maxd;$('#cfRad').value=c.r;$('#cfW').value=c.w;$('#cfNN').style.display=c.method==='nn'?'':'none';$('#cfR').style.display=c.method==='rad'?'':'none'}
-['cfCol','cfLineTap'].forEach(id=>$('#'+id).addEventListener('change',()=>{S.mapCfg.col=$('#cfCol').value;S.mapCfg.lineTap=$('#cfLineTap').checked;save();drawBH(false)}));
-['cfMethod','cfN','cfMax','cfRad','cfW'].forEach(id=>$('#'+id).addEventListener('change',()=>{const c=S.mapCfg;c.method=$('#cfMethod').value;c.n=Math.max(1,num($('#cfN').value)||6);c.maxd=Math.max(1,num($('#cfMax').value)||60);c.r=Math.max(1,num($('#cfRad').value)||25);c.w=$('#cfW').value;save();syncCfg();if(SEL&&SEL.g)pickAt(SEL.g,SEL.name)}));
-function updBhInfo(){$('#bhInfo').innerHTML=BH.holes.length||BH.lines.length?`<b>${BH.holes.length}</b> holes${BH.lines.length?`, ${BH.lines.length} lines`:''} · ${esc(BH.file||'')}${BH.nog?` · <span style="color:#b45309">${BH.nog} without Fe skipped</span>`:''}`:'No blasthole file loaded'}
-function initMap(){syncCfg();updBhInfo();
-  if(MAP){setTimeout(()=>MAP.invalidateSize(),50);drawInvPins();return}
+function saveBH(){try{localStorage.setItem(BKEY,JSON.stringify(BH));return true}catch(e){msg('File too large to keep in this browser — upload it again next time');return false}}
+const mc=()=>S.mapCfg;
+function bhMsg(t){const b=$('#fsBar');if(b)b.textContent=t}
+function updBhInfo(){$('#bhInfo').innerHTML=BH.holes.length||BH.lines.length?`<b>${BH.holes.length}</b> blastholes, ${BH.lines.length} face lines · <b>${esc(BH.file||'')}</b>${BH.at?' · uploaded '+esc(BH.at):''}${BH.nog?` · <span style="color:#b45309">${BH.nog} points without grades skipped</span>`:''}`:'Upload the latest blasthole map to start'}
+function lblVis(){if(MAP)$('#mapBox').classList.toggle('nolbl',!mc().lbl||MAP.getZoom()<18)}
+function flash(btn,text,left){const o=btn.querySelector('.tip');if(o)o.remove();const t=document.createElement('span');t.className='tip'+(left?' tl':'');t.textContent=text;btn.appendChild(t);clearTimeout(btn._tt);btn._tt=setTimeout(()=>t.remove(),2200)}
+const SVGI={
+ in:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',
+ out:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>',
+ lock:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
+ unlock:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.5-2"/></svg>',
+ gps:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>',
+ tome:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.5-5.4-6.5-10.5a6.5 6.5 0 0 1 13 0C18.5 15.6 12 21 12 21z"/><circle cx="12" cy="10.5" r="2.2" fill="currentColor"/></svg>',
+ drop:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9M8.5 8.5L12 12l3.5-3.5"/><path d="M5 18c0-1.7 3.1-3 7-3s7 1.3 7 3-3.1 3-7 3-7-1.3-7-3z"/></svg>',
+ holes:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.2" fill="currentColor"/><circle cx="5.5" cy="7" r="1.8"/><circle cx="18.5" cy="8" r="1.8"/><circle cx="7" cy="18.5" r="1.8"/><circle cx="18" cy="17.5" r="1.8"/></svg>',
+ dist:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" stroke-dasharray="3 3"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><path d="M12 12h9M18.5 9.5L21 12l-2.5 2.5"/></svg>'};
+let SHOVEL=null;
+function shovelIcon(){if(!SHOVEL)SHOVEL=L.divIcon({
+  className: 'custom-pin-icon',
+  html: `<svg width="52" height="52" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 3px 6px rgba(0,0,0,0.85));overflow:visible">
+    <defs>
+      <!-- Sleek Cartoon Gradients -->
+      <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#FFC217"/>
+        <stop offset="40%" stop-color="#FF9300"/>
+        <stop offset="100%" stop-color="#E05600"/>
+      </linearGradient>
+      <linearGradient id="boomGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#FFDF43"/>
+        <stop offset="50%" stop-color="#FFA200"/>
+        <stop offset="100%" stop-color="#DD6B00"/>
+      </linearGradient>
+      <linearGradient id="trackGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#556068"/>
+        <stop offset="45%" stop-color="#313A40"/>
+        <stop offset="100%" stop-color="#1B2125"/>
+      </linearGradient>
+      <linearGradient id="bucketGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#6B7983"/>
+        <stop offset="60%" stop-color="#424D54"/>
+        <stop offset="100%" stop-color="#232B30"/>
+      </linearGradient>
+      <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#E8F7FF"/>
+        <stop offset="45%" stop-color="#82C8F8"/>
+        <stop offset="100%" stop-color="#3A9BE2"/>
+      </linearGradient>
+    </defs>
+
+    <style>
+      .exc-boom-arm {
+        transform-origin: 47px 51px;
+        animation: boom-cycle 2.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+      }
+      .exc-stick-arm {
+        transform-origin: 22px 23px;
+        animation: stick-cycle 2.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+      }
+      .exc-bucket-head {
+        transform-origin: 9px 39px;
+        animation: bucket-dig-curl 2.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+      }
+
+      /* Realistic Mining Active Dig Cycle */
+      @keyframes boom-cycle {
+        0%   { transform: rotate(0deg); }
+        30%  { transform: rotate(11deg); }  /* Boom lowers to face */
+        60%  { transform: rotate(-5deg); }  /* Crowding and lifting ore */
+        85%  { transform: rotate(-10deg); } /* Hoisting full bucket */
+        100% { transform: rotate(0deg); }
+      }
+      @keyframes stick-cycle {
+        0%   { transform: rotate(0deg); }
+        30%  { transform: rotate(-10deg); } /* Stick reaches forward into bench */
+        60%  { transform: rotate(18deg); }  /* Stick draws payload inwards */
+        85%  { transform: rotate(8deg); }   /* Holding position */
+        100% { transform: rotate(0deg); }
+      }
+      @keyframes bucket-dig-curl {
+        0%   { transform: rotate(0deg); }
+        25%  { transform: rotate(-22deg); } /* Teeth tilted forward to penetrate ore */
+        55%  { transform: rotate(38deg); }  /* Aggressive curl into bucket */
+        85%  { transform: rotate(28deg); }  /* Retaining ROM during swing/raise */
+        100% { transform: rotate(0deg); }
+      }
+    </style>
+
+    <!-- Articulated Front Excavator Assembly -->
+    <g class="exc-boom-arm">
+      <!-- Main Boom -->
+      <path d="M47 51 L44 32 C43 27 46 22 51 22 C56 22 58 27 55 33 L62 48 Z" fill="url(#boomGrad)" stroke="#ffffff" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M48 24 L24 20 L22 26 L46 29 Z" fill="url(#boomGrad)" stroke="#ffffff" stroke-width="1.8" stroke-linejoin="round"/>
+      
+      <!-- Big Orange Boom Pivot Ring (from image) -->
+      <circle cx="48" cy="25" r="5" fill="#FFA500" stroke="#D36500" stroke-width="1.5"/>
+      <circle cx="48" cy="25" r="2.2" fill="#FFE86B"/>
+
+      <!-- Stick Assembly -->
+      <g class="exc-stick-arm">
+        <path d="M22 23 L9 39 L13 41 L25 25 Z" fill="url(#boomGrad)" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round"/>
+        <!-- Stick Pivot Ring -->
+        <circle cx="23" cy="24" r="3.5" fill="#FFA500" stroke="#D36500" stroke-width="1.2"/>
+        <circle cx="23" cy="24" r="1.5" fill="#FFE86B"/>
+
+        <!-- Bucket with Teeth -->
+        <g class="exc-bucket-head">
+          <path d="M9 39 C3 41 1 54 8 60 C15 65 24 63 28 54 C30 49 26 46 20 45 L15 42 Z" fill="url(#bucketGrad)" stroke="#ffffff" stroke-width="1.8" stroke-linejoin="round"/>
+          <!-- Heavy-duty teeth -->
+          <polygon points="17,44 19,40 21,45" fill="#D2DCE2"/>
+          <polygon points="21,47 24,43 25,49" fill="#D2DCE2"/>
+          <polygon points="25,51 28,47 29,53" fill="#D2DCE2"/>
+          <!-- Inner Bucket Shadow Depth -->
+          <path d="M12 43 C8 46 6 54 11 58 C14 60 20 58 23 52 Z" fill="#1C2125" opacity="0.4"/>
+        </g>
+      </g>
+    </g>
+
+    <!-- Base Carriage & Cabin (Ground Reference, matching cartoon image) -->
+    <!-- Revolving Upper Platform -->
+    <path d="M37 53 L90 53 C94 53 96 56 93 60 L89 64 C87 65 85 66 82 66 L39 66 C36 66 34 62 36 57 Z" fill="url(#bodyGrad)" stroke="#ffffff" stroke-width="2" stroke-linejoin="round"/>
+    
+    <!-- Operator Cabin Structure -->
+    <path d="M62 53 L70 30 C71 28 73 27 75 27 L84 27 C86 27 88 29 88 31 L89 53 Z" fill="url(#bodyGrad)" stroke="#ffffff" stroke-width="2" stroke-linejoin="round"/>
+    <!-- Angled Cabin Multi-Pane Glass -->
+    <path d="M65 49 L71 31 C72 30 73 29 74 29 L82 29 C83 29 84 30 84 31 L84 49 Z" fill="url(#glassGrad)" stroke="#ffffff" stroke-width="1.2"/>
+    <line x1="77" y1="29" x2="77" y2="49" stroke="#ffffff" stroke-width="1.2" opacity="0.8"/>
+
+    <!-- Pill-shaped Continuous Rubber Track -->
+    <rect x="40" y="67" width="50" height="17" rx="8.5" fill="url(#trackGrad)" stroke="#ffffff" stroke-width="2"/>
+    <!-- Inner Track Recess -->
+    <rect x="46" y="71" width="38" height="9" rx="4.5" fill="#151A1D" stroke="#3D464D" stroke-width="1.2"/>
+  </svg>`,
+  iconSize: [52, 52],
+  iconAnchor: [26, 48] // Precision anchor at bottom rubber track
+});return SHOVEL}
+function setFull(on){$('#mapHold').classList.toggle('full',on);document.body.style.overflow=on?'hidden':'';if(fsBtn){fsBtn.innerHTML=on?SVGI.out:SVGI.in;fsBtn.title=on?'Exit full screen':'Full screen map'}
+  try{if(on&&document.documentElement.requestFullscreen&&!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});if(!on&&document.fullscreenElement)document.exitFullscreen().catch(()=>{})}catch(e){}
+  setTimeout(()=>MAP.invalidateSize(),80)}
+function setLock(on){if(on&&!PIN){msg('Place the shovel on the loading unit first, then lock it');return}LOCK=on;if(PIN){on?PIN.dragging.disable():PIN.dragging.enable()}
+  lockBtn.classList.toggle('on',on);lockBtn.innerHTML=on?SVGI.lock:SVGI.unlock;lockBtn.title=on?'Unlock shovel position':'Lock shovel position';msg(on?'Shovel position locked':'Shovel position unlocked')}
+function ctl(pos,build){const C=L.Control.extend({options:{position:pos},onAdd(){const box=L.DomUtil.create('div','leaflet-bar');build(box);L.DomEvent.disableClickPropagation(box);L.DomEvent.disableScrollPropagation(box);return box}});MAP.addControl(new C())}
+function btn(box,html,title,fn){const b=L.DomUtil.create('a','ico-btn',box);b.href='#';b.setAttribute('role','button');b.innerHTML=html;b.title=title;b.setAttribute('aria-label',title);L.DomEvent.on(b,'click',ev=>{L.DomEvent.stop(ev);ctlTs=Date.now();fn(b)});return b}
+function initMap(){updBhInfo();$('#bhLbl').checked=!!mc().lbl;$('#bhW').checked=mc().w!==false;
+  if(MAP){setTimeout(()=>MAP.invalidateSize(),50);drawInvPins();if(!$('#pkRes'))renderPanel();return}
   if(!window.L){$('#mapBox').innerHTML='<div style="color:#fff;padding:20px">Map library could not load — it needs internet the first time the app opens.</div>';return}
-  MAP=L.map('mapBox',{preferCanvas:true,maxZoom:22}).setView([22.155,85.49],14);
-  const sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxNativeZoom:19,maxZoom:22,attribution:'Imagery © Esri'}).addTo(MAP);
-  const osm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxNativeZoom:19,maxZoom:22,attribution:'© OpenStreetMap'});
-  L.control.layers({'Satellite':sat,'Street':osm},null,{position:'topright'}).addTo(MAP);
-  L.control.scale({imperial:false}).addTo(MAP);
-  MAP.createPane('linesPane').style.zIndex=450;LG.svg=L.svg({pane:'linesPane'});
-  ['lines','bh','sel','inv'].forEach(k=>LG[k]=L.layerGroup().addTo(MAP));
-  const lg=L.control({position:'bottomleft'});lg.onAdd=()=>{LG.leg=L.DomUtil.create('div','legend');return LG.leg};lg.addTo(MAP);
-  MAP.on('click',e=>pickAt({type:'pt',lat:e.latlng.lat,lon:e.latlng.lng}));
-  drawBH(true);drawInvPins();setTimeout(()=>MAP.invalidateSize(),80);
-}
-function legendHTML(){if(S.mapCfg.col==='fe')return'<b>Hole Fe</b><i style="background:#15803d"></i>≥64<i style="background:#d97706"></i>62–64<i style="background:#dc2626"></i>60–62<i style="background:#7c3aed"></i>&lt;60';
-  const cnt={};BH.holes.forEach(h=>{const b=matBase(h.mat)||'Other';cnt[b]=(cnt[b]||0)+1});const order=['DR','W1','W2','BHJ','OB','HO','SG'];
-  const ks=Object.keys(cnt).sort((a,b)=>(order.indexOf(a)+1||99)-(order.indexOf(b)+1||99));
-  return '<b>Material</b>'+ks.map(k=>`<i style="background:${MATC[k]||'#808080'};border:1px solid #333"></i>${esc(k)} ${cnt[k]}`).join('')+(BH.holes.some(h=>isP(h.mat))?'<br><i style="background:#fff;border:3px solid #000"></i>ring = high-P (…P)':'')}
-function drawBH(fit){if(!MAP)return;LG.bh.clearLayers();LG.lines.clearLayers();if(LG.leg)LG.leg.innerHTML=BH.holes.length?legendHTML():'';
-  const tap=S.mapCfg.lineTap;
-  BH.lines.forEach(ln=>{const o={pane:'linesPane',renderer:LG.svg};L.polyline(ln.coords,{...o,color:ln.col||'#ffffff',weight:tap?2.5:1.5,opacity:.85,interactive:false}).addTo(LG.lines);
-    if(tap)L.polyline(ln.coords,{...o,color:'#000',weight:14,opacity:0}).bindTooltip(esc(ln.name||'Face line'),{sticky:true}).on('click',ev=>{L.DomEvent.stopPropagation(ev);pickAt({type:'line',coords:ln.coords},ln.name)}).addTo(LG.lines)});
-  const byMat=S.mapCfg.col!=='fe';
-  BH.holes.forEach(h=>{const p=isP(h.mat);L.circleMarker([h.lat,h.lon],{radius:p?6:5.5,color:p?'#000':'#222',weight:p?3:1,fillColor:byMat?matCol(h):feCol(h.Fe),fillOpacity:.95})
-    .bindTooltip(`<b>${esc(h.mat||'')}</b> ${esc(h.id||'')}<br>Fe ${fmt(h.Fe,'Fe')} · SiO2 ${fmt(h.SiO2,'SiO2')} · Al2O3 ${fmt(h.Al2O3,'Al2O3')}${h.P!=null?' · P '+fmt(h.P,'P'):''}`).addTo(LG.bh)});
-  if(fit){const pts=[...BH.holes.map(h=>[h.lat,h.lon]),...BH.lines.flatMap(l=>l.coords)];if(pts.length)MAP.fitBounds(pts,{padding:[30,30],maxZoom:18})}
-}
+  MAP=L.map('mapBox',{preferCanvas:true,renderer:L.canvas({padding:0.5}),maxZoom:21}).setView([22.12,85.49],14);
+  const osm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:21,maxNativeZoom:19,attribution:'&copy; OpenStreetMap'});
+  const sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:21,maxNativeZoom:17,attribution:'Esri'}).addTo(MAP);
+  const satHi=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:21,maxNativeZoom:19,attribution:'Esri'});
+  ['lines','bh','hit','inv'].forEach(k=>LG[k]=L.layerGroup().addTo(MAP));
+  L.control.layers({Satellite:sat,'Satellite (sharper, if available)':satHi,Street:osm},{'Blastholes':LG.bh,'Face lines':LG.lines,'Inventory faces':LG.inv}).addTo(MAP);
+  // left controls: full screen, lock, GPS / pin at GPS / drop pin
+  ctl('topleft',box=>{fsBtn=btn(box,SVGI.in,'Full screen map',b=>{setFull(!$('#mapHold').classList.contains('full'));flash(b,$('#mapHold').classList.contains('full')?'Exit full screen':'Full screen')})});
+  ctl('topleft',box=>{lockBtn=btn(box,SVGI.unlock,'Lock shovel position',b=>{setLock(!LOCK);flash(b,LOCK?'Pin locked':'Pin unlocked')})});
+  ctl('topleft',box=>{btn(box,SVGI.gps,'Show my GPS',b=>{gpsStart();flash(b,'Show my GPS')});btn(box,SVGI.tome,'Pin at my GPS',b=>{pinAtGps();flash(b,'Pin at my GPS')});btn(box,SVGI.drop,'Drop pin',b=>{if(LOCK){lockedWarn();return}const c=MAP.getCenter();setPos(c.lat,c.lng);flash(b,'Drop pin')})});
+  // right: nearest holes / max distance pop-outs with badges
+  ctl('topright',box=>{box.classList.add('opt-bar');[['Nearest holes','k',SVGI.holes,1,30,1],['Max distance (m)','R',SVGI.dist,5,500,5]].forEach(([name,key,ico,mn,mx,st])=>{
+    const b=L.DomUtil.create('a','ico-btn',box);b.href='#';b.title=name;b.innerHTML=ico+`<span class="bdg" id="bd_${key}">${mc()[key]}</span>`;
+    const pop=L.DomUtil.create('div','opt-pop',box);pop.hidden=true;pop.innerHTML=`<span>${name}</span><button type="button" data-d="-1">−</button><input type="number" min="${mn}" max="${mx}" inputmode="numeric" value="${mc()[key]}"><button type="button" data-d="1">+</button>`;
+    const inp=pop.querySelector('input');let tt;const arm=()=>{clearTimeout(tt);tt=setTimeout(()=>pop.hidden=true,5000)};
+    const set=v=>{v=Math.min(mx,Math.max(mn,+v||mn));mc()[key]=v;inp.value=v;$('#bd_'+key).textContent=v;save();bhUpdate()};
+    L.DomEvent.on(b,'click',ev=>{L.DomEvent.preventDefault(ev);ctlTs=Date.now();const open=pop.hidden;box.querySelectorAll('.opt-pop').forEach(q=>q.hidden=true);if(open){pop.style.top=b.offsetTop+'px';pop.hidden=false;arm()}});
+    pop.addEventListener('click',e=>{const bt=e.target.closest('button');if(!bt)return;set((+inp.value||0)+st*(+bt.dataset.d));arm()});
+    inp.addEventListener('input',()=>{if(inp.value!=='')set(inp.value);arm()})})});
+  MAP._controlCorners.topcenter=L.DomUtil.create('div','leaflet-top leaflet-center',MAP._controlContainer);
+  L.control.scale({position:'topcenter',metric:true,imperial:false,maxWidth:130}).addTo(MAP);
+  MAP.on('zoomend',lblVis);
+  MAP.on('click',e=>{if(LOCK||Date.now()-ctlTs<700)return;setPos(e.latlng.lat,e.latlng.lng)});
+  document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&$('#mapHold').classList.contains('full'))setFull(false)});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#mapHold').classList.contains('full'))setFull(false)});
+  drawBH(true);drawInvPins();renderPanel();setTimeout(()=>MAP.invalidateSize(),80)}
+$('#bhLbl').onchange=e=>{mc().lbl=e.target.checked;save();lblVis()};
+$('#bhW').onchange=e=>{mc().w=e.target.checked;save();bhUpdate()};
+function drawBH(fit){if(!MAP)return;LG.bh.clearLayers();LG.lines.clearLayers();
+  BH.lines.forEach(l=>L.polyline(l.coords,{color:l.col||'#ffffff',opacity:l.o??1,weight:l.w||2,interactive:false}).addTo(LG.lines));
+  BH.holes.forEach(h=>{const nm=h.name||h.id||'';L.circleMarker([h.lat,h.lon],{radius:5,color:'#000',weight:1,fillColor:tcol(h.mat),fillOpacity:.9})
+    .bindPopup(`<b>${esc(nm)}</b><br>Fe ${h.Fe??'-'} | SiO2 ${h.SiO2??'-'} | Al2O3 ${h.Al2O3??'-'} | P ${h.P??'-'}`)
+    .bindTooltip(esc(nm),{permanent:true,direction:'right',offset:[6,0],className:'lbl'}).addTo(LG.bh)});
+  if(fit&&BH.holes.length)MAP.fitBounds(L.latLngBounds(BH.holes.map(h=>[h.lat,h.lon])).pad(.1));
+  lblVis();bhMsg(BH.holes.length?'Place the active shovel on the loading unit':'Upload a blasthole map to start');if(LAST)bhUpdate()}
 function drawInvPins(){if(!MAP)return;LG.inv.clearLayers();S.inv.filter(f=>f.lat!=null).forEach(f=>{
   L.marker([f.lat,f.lon],{icon:L.divIcon({className:'fpin',html:`<span style="background:${feCol(f.Fe)}"></span>${esc(f.name)}`,iconSize:null,iconAnchor:[9,9]})}).on('click',ev=>{L.DomEvent.stopPropagation(ev);faceInfo(f.id)}).addTo(LG.inv)})}
 
-/* KML / KMZ */
-$('#bhFile').onchange=async e=>{const files=[...e.target.files];e.target.value='';if(!files.length)return;
-  let holes=[],lines=[],nog=0;
-  for(const f of files){let txts=[];
-    try{if(/\.kmz$/i.test(f.name)){if(!window.JSZip){msg('KMZ needs internet the first time; try the KML instead');continue}
-        const z=await JSZip.loadAsync(f);for(const n of Object.keys(z.files))if(/\.kml$/i.test(n))txts.push(await z.files[n].async('string'))}
-      else txts.push(await f.text())}catch(err){msg('Could not read '+f.name);continue}
-    txts.forEach(t=>{const r=parseKML(t);holes.push(...r.holes);lines.push(...r.lines);nog+=r.nog})}
-  if(!holes.length&&!lines.length){msg('No blastholes or lines found in the file');return}
-  const add=$('#bhAdd').checked;const names=files.map(f=>f.name).join(', ');
-  BH=add?{holes:[...BH.holes,...holes],lines:[...BH.lines,...lines],file:(BH.file?BH.file+' + ':'')+names,nog:(BH.nog||0)+nog}:{holes,lines,file:names,nog,at:new Date().toLocaleString()};
-  saveBH();updBhInfo();drawBH(true);msg(`${holes.length} blastholes${lines.length?`, ${lines.length} lines`:''} loaded`)};
-$('#bhClr').onclick=e=>confirm2(e.target,'Click again to clear',()=>{BH={holes:[],lines:[]};saveBH();updBhInfo();drawBH();LG.sel&&LG.sel.clearLayers()});
+/* KML / KMZ — Fe-SiO2-Al2O3-P_Type point names (or extended data), face/bench lines with their own colours */
+$('#bhFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;let txts=[];
+  try{if(/\.kmz$/i.test(f.name)){if(!window.JSZip){msg('KMZ needs internet the first time; try the KML instead');return}
+      const z=await JSZip.loadAsync(f);for(const n of Object.keys(z.files))if(/\.kml$/i.test(n))txts.push(await z.files[n].async('string'))}
+    else txts.push(await f.text())}catch(err){msg('Could not read file: '+err.message);return}
+  let holes=[],lines=[],nog=0;txts.forEach(t=>{const r=parseKML(t);holes.push(...r.holes);lines.push(...r.lines);nog+=r.nog});
+  if(!holes.length){msg('No usable points found. Check the naming format (e.g. 67-1-1.2-0.08_HO).');return}
+  BH={holes,lines,file:f.name,nog,at:new Date().toLocaleString([],{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})};
+  const ok=saveBH();updBhInfo();if(ok)$('#bhInfo').innerHTML+=' · saved for next time';drawBH(true);msg(`${holes.length} blastholes, ${lines.length} face lines loaded`)};
 const TG=(el,n)=>el.getElementsByTagNameNS('*',n);
 const TX=(el,n)=>(TG(el,n)[0]?.textContent||'').trim();
-const parseCoords=s=>s.trim().split(/\s+/).map(c=>c.split(',').map(Number)).filter(a=>a.length>=2&&!isNaN(a[0])&&!isNaN(a[1])).map(a=>[a[1],a[0]]);
+const parseCoords=s=>s.trim().split(/\s+/).map(c=>c.split(',').map(Number)).filter(a=>a.length>=2&&!isNaN(a[0])&&!isNaN(a[1])).map(a=>[+a[1].toFixed(6),+a[0].toFixed(6)]);
 function getAttrs(pm){const o={};
-  for(const d of TG(pm,'Data'))o[d.getAttribute('name')||d.getAttribute('displayName')||'']=TX(d,'value');
+  for(const d of TG(pm,'Data'))o[d.getAttribute('name')||'']=TX(d,'value');
   for(const d of TG(pm,'SimpleData'))o[d.getAttribute('name')]=d.textContent.trim();
   const desc=TX(pm,'description');
-  if(desc){if(/<t[dh][\s>]/i.test(desc)){const h=new DOMParser().parseFromString(desc,'text/html');const rows=[...h.querySelectorAll('tr')].map(tr=>[...tr.querySelectorAll('td,th')].map(c=>c.textContent.trim()));
-      if(rows.length>=2&&rows[0].length>2&&rows[1].length===rows[0].length&&rows.slice(1).every(r=>r.length===rows[0].length)){rows[0].forEach((k,i)=>{if(!(k in o))o[k]=rows[1][i]})}
-      else rows.forEach(r=>{for(let i=0;i+1<r.length;i+=2)if(!(r[i] in o))o[r[i]]=r[i+1]})}
-    else{desc.replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,' ').split(/\n|;|\|/).forEach(l=>{const m=l.match(/^\s*([^:=]{1,30}?)\s*[:=]\s*(.+?)\s*$/);if(m&&!(m[1] in o))o[m[1]]=m[2]})}}
+  if(desc&&/<t[dh][\s>]/i.test(desc)){const h=new DOMParser().parseFromString(desc,'text/html');[...h.querySelectorAll('tr')].map(tr=>[...tr.querySelectorAll('td,th')].map(c=>c.textContent.trim())).forEach(r=>{for(let i=0;i+1<r.length;i+=2)if(!(r[i] in o))o[r[i]]=r[i+1]})}
   return o}
-const kmlCol=c=>{c=(c||'').trim();if(!/^[0-9a-f]{8}$/i.test(c))return'';return'#'+c.slice(6,8)+c.slice(4,6)+c.slice(2,4)};
-function mapAttrs(o,name){const h={id:name||'',mat:''};
+function mapAttrs(o,name){const h={id:'',mat:'',name:name||''};
   for(const [k0,v] of Object.entries(o)){const k=k0.toLowerCase().replace(/[^a-z0-9]/g,'');
     if(/^t?fe(pct|percent|per|grade|avg)?$/.test(k))h.Fe=num(v);
     else if(/^(sio2|si02|silica)/.test(k))h.SiO2=num(v);
     else if(/^(al2o3|al203|ai2o3|alumina)/.test(k))h.Al2O3=num(v);
     else if(/^(p|phos|phosphorus)(pct|percent|per)?$/.test(k))h.P=num(v);
     else if(/^(k2o|k20)/.test(k))h.K2O=num(v);
-    else if(/^(hole|holeid|holeno|holename|bh|bhid|bhno|bhname|id|no)$/.test(k)&&v)h.id=v;
-    else if(/^(mat|material|materialtype|mattype|type|rocktype|oretype|lith|lithology|class|category)$/.test(k))h.mat=v}
-  AN.forEach(a=>{if(h[a]===undefined)h[a]=null});
-  // BH2KMZ / ROM app style: name = "Fe-SiO2-Al2O3-P_MAT"  e.g. 67-0.9-1.1-0.03_HO
-  const m=String(name||'').trim().match(/^([\d.]+)\s*[-|\/]\s*([\d.]+)\s*[-|\/]\s*([\d.]+)(?:\s*[-|\/]\s*([\d.]+))?(?:\s*[-|\/]\s*([\d.]+))?\s*(?:[_\s]+([A-Za-z][A-Za-z0-9]*))?$/);
-  if(m&&h.Fe==null){h.Fe=num(m[1]);h.SiO2=num(m[2]);h.Al2O3=num(m[3]);if(m[4]!=null)h.P=num(m[4]);if(m[5]!=null)h.K2O=num(m[5]);if(m[6]&&!h.mat)h.mat=m[6].toUpperCase();if(h.id===name)h.id=''}
-  return h}
-function parseKML(t){const d=new DOMParser().parseFromString(t,'text/xml');const out={holes:[],lines:[],nog:0};
-  const st={};for(const s of TG(d,'Style')){const id=s.getAttribute('id');if(!id)continue;const ic=TG(s,'IconStyle')[0],lc=TG(s,'LineStyle')[0];st['#'+id]={icon:ic?kmlCol(TX(ic,'color')):'',line:lc?kmlCol(TX(lc,'color')):''}}
-  for(const pm of TG(d,'Placemark')){const name=TX(pm,'name');const sty=st[TX(pm,'styleUrl')]||{};
-    const pt=TG(pm,'Point')[0];
-    if(pt){const c=parseCoords(TX(pt,'coordinates'))[0];if(!c)continue;const h=mapAttrs(getAttrs(pm),name);h.lat=c[0];h.lon=c[1];if(sty.icon&&!MATC[matBase(h.mat)])h.col=sty.icon;if(h.Fe!=null)out.holes.push(h);else out.nog++;continue}
-    const ls=TG(pm,'LineString')[0]||TG(pm,'LinearRing')[0];
-    if(ls){const cs=parseCoords(TX(ls,'coordinates'));if(cs.length)out.lines.push({name:name||TX(pm,'description')&&('String '+TX(pm,'description'))||'',coords:cs.map(c=>[+c[0].toFixed(7),+c[1].toFixed(7)]),col:sty.line||''})}}
+    else if(/^(hole|holeid|holeno|bh|bhid|id)$/.test(k)&&v)h.id=v;
+    else if(/^(type|material|materialtype|mat|oretype)$/.test(k))h.mat=String(v).toUpperCase()}
+  const m=/^\s*(-?[\d.]+)-(-?[\d.]+)-(-?[\d.]+)-(-?[\d.]+)_(.+?)\s*$/.exec(name||'');
+  if(m&&h.Fe==null){h.Fe=+m[1];h.SiO2=+m[2];h.Al2O3=+m[3];h.P=+m[4];h.mat=m[5].trim().toUpperCase()}
+  if(!h.mat&&name&&name.includes('_'))h.mat=name.split('_')[1].toUpperCase();
+  AN.forEach(a=>{if(h[a]===undefined)h[a]=null});return h}
+const kc=c=>{c=(c||'').trim();if(c.length!==8)return{col:'#ffffff',o:1};return{col:parseInt(c.slice(2),16)<0x202020?'#ffffff':'#'+c.slice(6,8)+c.slice(4,6)+c.slice(2,4),o:parseInt(c.slice(0,2),16)/255}};
+function parseKML(t){const d=new DOMParser().parseFromString(t,'text/xml');const out={holes:[],lines:[],nog:0},sty={};
+  for(const st of TG(d,'Style')){const id=st.getAttribute('id'),ls=TG(st,'LineStyle')[0];if(id&&ls){const w=TX(ls,'width');sty[id]={...kc(TX(ls,'color')),w:w?+w:2}}}
+  for(const sm of TG(d,'StyleMap')){const id=sm.getAttribute('id');for(const pr of TG(sm,'Pair')){if(TX(pr,'key')==='normal'){const u=TX(pr,'styleUrl').slice(1);if(id&&sty[u])sty[id]=sty[u]}}}
+  for(const pm of TG(d,'Placemark')){const name=TX(pm,'name');const pt=TG(pm,'Point')[0];
+    if(pt){const c=parseCoords(TX(pt,'coordinates'))[0];if(!c)continue;const h=mapAttrs(getAttrs(pm),name);h.lat=c[0];h.lon=c[1];if(h.Fe!=null)out.holes.push(h);else out.nog++;continue}
+    let st=sty[TX(pm,'styleUrl').slice(1)];if(!st){const il=TG(pm,'LineStyle')[0];st=il?{...kc(TX(il,'color')),w:2}:{col:'#ffffff',o:1,w:2}}
+    for(const g of [...TG(pm,'LineString'),...TG(pm,'LinearRing')]){const cs=parseCoords(TX(g,'coordinates'));if(cs.length>1)out.lines.push({coords:cs,col:st.col,o:st.o,w:Math.min(st.w||2,3)})}}
   return out}
 
-/* face pick */
-const proj=lat0=>{const kx=111320*Math.cos(lat0*Math.PI/180),ky=110540;return(lat,lon)=>[lon*kx,lat*ky]};
-function segDist(p,a,b){const dx=b[0]-a[0],dy=b[1]-a[1],l=dx*dx+dy*dy;let t=l?((p[0]-a[0])*dx+(p[1]-a[1])*dy)/l:0;t=Math.max(0,Math.min(1,t));return Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dy)}
-function selectHoles(g){const c=S.mapCfg;let arr;
-  if(g.type==='pt'){const P=proj(g.lat),o=P(g.lat,g.lon);arr=BH.holes.map(h=>{const q=P(h.lat,h.lon);return{h,d:Math.hypot(q[0]-o[0],q[1]-o[1])}}).sort((a,b)=>a.d-b.d);
-    arr=c.method==='nn'?arr.filter(x=>x.d<=c.maxd).slice(0,c.n):arr.filter(x=>x.d<=c.r)}
-  else{const P=proj(g.coords[0][0]),pts=g.coords.map(x=>P(x[0],x[1]));
-    arr=BH.holes.map(h=>{const q=P(h.lat,h.lon);let d=pts.length===1?Math.hypot(q[0]-pts[0][0],q[1]-pts[0][1]):Infinity;for(let i=1;i<pts.length;i++)d=Math.min(d,segDist(q,pts[i-1],pts[i]));return{h,d}}).filter(x=>x.d<=c.r).sort((a,b)=>a.d-b.d)}
-  const avg={},mat={};AN.forEach(a=>{let s=0,w=0;arr.forEach(x=>{const v=x.h[a];if(v==null)return;const ww=c.w==='idw'?1/Math.max(x.d,1)**2:1;s+=v*ww;w+=ww});avg[a]=w?s/w:null});
-  arr.forEach(x=>{const m=x.h.mat||'—';mat[m]=(mat[m]||0)+1});return{arr,avg,mat}}
-function centre(g){if(g.type==='pt')return[g.lat,g.lon];const c=g.coords[Math.floor(g.coords.length/2)];return c}
-function pickAt(g,name){if(!BH.holes.length){msg('Load a Blasthole KML/KMZ first');return}
-  const res=selectHoles(g);SEL={g,res,name};LG.sel.clearLayers();
-  if(g.type==='line')L.polyline(g.coords,{color:'#ffeb3b',weight:5}).addTo(LG.sel);
-  else L.circleMarker([g.lat,g.lon],{radius:7,color:'#000',weight:2,fillColor:'#fff',fillOpacity:1}).addTo(LG.sel);
-  res.arr.forEach(x=>L.circleMarker([x.h.lat,x.h.lon],{radius:10,color:'#ffeb3b',weight:3,fill:false,interactive:false}).addTo(LG.sel));
-  renderPick()}
-function suggestName(){if(SEL.name)return SEL.name;const [la,lo]=centre(SEL.g);const P=proj(la),o=P(la,lo);let best=null,bd=40;
-  S.inv.forEach(f=>{if(f.lat==null)return;const q=P(f.lat,f.lon),d=Math.hypot(q[0]-o[0],q[1]-o[1]);if(d<bd){bd=d;best=f}});return best?best.name:''}
+/* loading-unit pin, ring and nearest holes */
+function setPos(lat,lon){LAST={lat,lon};
+  if(PIN)PIN.setLatLng([lat,lon]);
+  else{PIN=L.marker([lat,lon],{draggable:true,icon:shovelIcon(),title:'Loading Unit (Active Digging)'}).addTo(MAP);if(LOCK)PIN.dragging.disable();
+    let raf=null;PIN.on('drag',e=>{if(raf)cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{const q=e.target.getLatLng();LAST={lat:q.lat,lon:q.lng};bhUpdate()})});
+    PIN.on('dragend',e=>{const q=e.target.getLatLng();LAST={lat:q.lat,lon:q.lng};bhUpdate();suggest()})}
+  bhUpdate();suggest()}
+const lockedWarn=()=>msg('Shovel is locked. Tap the lock on the map to unlock');
+function gpsStart(){if(!navigator.geolocation){msg('GPS is not available in this browser');return}if(WATCH!==null)navigator.geolocation.clearWatch(WATCH);let first=true;
+  if(GPS)MAP.setView(GPS,Math.max(MAP.getZoom(),18));
+  WATCH=navigator.geolocation.watchPosition(p=>{GPS=[p.coords.latitude,p.coords.longitude];if(first){first=false;MAP.setView(GPS,Math.max(MAP.getZoom(),18))}
+    if(PINFIX){PINFIX=false;if(!LOCK)setPos(GPS[0],GPS[1])}
+    const g=$('#gpsinfo');if(g)g.textContent='Your GPS accuracy about '+Math.round(p.coords.accuracy)+' m (blue dot)';
+    if(ME)ME.setLatLng(GPS);else ME=L.circleMarker(GPS,{radius:7,color:'#fff',weight:2,fillColor:'#2563eb',fillOpacity:1}).addTo(MAP)},
+    e=>msg('GPS error: '+e.message),{enableHighAccuracy:true,maximumAge:2000})}
+function pinAtGps(){if(LOCK){lockedWarn();return}if(GPS){setPos(GPS[0],GPS[1]);MAP.setView(GPS,Math.max(MAP.getZoom(),18))}else{PINFIX=true;msg('Getting your GPS position…');gpsStart()}}
+function bhUpdate(){if(!MAP||!LAST)return;const p=LAST,k=Math.max(1,mc().k||3),R=mc().R||15,wt=mc().w!==false;
+  const near=BH.holes.map(h=>({h,d:MAP.distance([p.lat,p.lon],[h.lat,h.lon])})).filter(x=>x.d<=R).sort((a,b)=>a.d-b.d).slice(0,k);
+  if(RING)RING.setLatLng([p.lat,p.lon]).setRadius(R);else RING=L.circle([p.lat,p.lon],{radius:R,color:'#ffe600',weight:2.5,opacity:.95,fillColor:'#ffe600',fillOpacity:.12,interactive:false}).addTo(MAP);
+  LG.hit.clearLayers();near.forEach(x=>L.polyline([[p.lat,p.lon],[x.h.lat,x.h.lon]],{color:'#ffe600',weight:2.5,dashArray:'4 4',interactive:false}).addTo(LG.hit));
+  if(!near.length){RES=null;bhMsg('No holes within '+R+' m');renderRes();return}
+  const w=near.map(x=>wt?1/Math.max(x.d,1):1),sw=w.reduce((a,b)=>a+b,0);
+  const avg={};AN.forEach(a=>{let s2=0,t=0;near.forEach((x,i)=>{if(x.h[a]!=null){s2+=x.h[a]*w[i];t+=w[i]}});avg[a]=t?s2/t:null});
+  const mix={};near.forEach((x,i)=>{const t=x.h.mat||'Other';mix[t]=(mix[t]||0)+w[i]/sw});
+  RES={avg,mix,near,wt,R};bhMsg(`Fe ${fmt(avg.Fe,'Fe')} | SiO2 ${fmt(avg.SiO2,'SiO2')} | Al2O3 ${fmt(avg.Al2O3,'Al2O3')} | P ${fmt(avg.P,'P')}  (${near.length} holes)`);renderRes()}
+
+/* side panel */
 const plantOpts=sel=>PL.map(p=>`<option value="${p.k}"${p.k===sel?' selected':''}>${esc(p.n)}</option>`).join('');
-function gradeTable(v,an=AN){return `<table class="g" style="margin:6px 0"><tr>${an.map(a=>`<th>${a}</th>`).join('')}</tr><tr>${an.map(a=>`<td><b>${fmt(v[a],a)}</b></td>`).join('')}</tr></table>`}
-function renderPick(){const {res}=SEL,P=$('#mapPanel'),c=S.mapCfg;
-  if(!res.arr.length){P.innerHTML=`<h3>No blastholes found here</h3><div class="hint">${c.method==='nn'?`No hole within ${c.maxd} m. Increase “max m”.`:`No hole within ${c.r} m radius.`}</div>`;return}
-  const nm=suggestName(),ex=S.inv.find(f=>f.name.toLowerCase()===nm.toLowerCase());
-  const d0=res.arr[0].d,d1=res.arr[res.arr.length-1].d;
-  P.innerHTML=`<h3>Face quality · ${res.arr.length} blastholes</h3>
-   <div class="hint">${SEL.g.type==='line'?'Along face line':'Around tapped point'} · ${d0.toFixed(0)}–${d1.toFixed(0)} m · ${c.w==='idw'?'distance-weighted':'simple average'}</div>
-   ${gradeTable(res.avg)}
-   <div class="chips">${Object.entries(res.mat).sort((a,b)=>b[1]-a[1]).map(([m,n])=>`<span class="chip">${esc(m)} × ${n}</span>`).join('')}</div>
-   <details style="margin-top:6px"><summary class="hint">Holes used</summary><div class="wrap" style="max-height:200px;overflow:auto"><table class="g"><tr><th>Hole</th><th>Mat</th><th>m</th><th>Fe</th><th>SiO2</th><th>Al2O3</th><th>P</th></tr>
-     ${res.arr.map(x=>`<tr><td>${esc(x.h.id)}</td><td>${esc(x.h.mat)}</td><td>${x.d.toFixed(0)}</td><td>${fmt(x.h.Fe,'Fe')}</td><td>${fmt(x.h.SiO2,'SiO2')}</td><td>${fmt(x.h.Al2O3,'Al2O3')}</td><td>${fmt(x.h.P,'P')}</td></tr>`).join('')}</table></div></details>
+function renderPanel(){const ex=null;
+  $('#mapPanel').innerHTML=`<h3>ROM quality at this face</h3><div id="pkRes" class="hint">No location yet. Drag the excavator or tap the map.</div><div id="gpsinfo" class="hint"></div>
+   <div style="border-top:1px solid #eef0f3;margin-top:10px;padding-top:8px"><h3>Save as inventory face</h3>
    <div class="frm">
-     <span class="hint">Face name</span><input class="inp" id="pkName" list="dlFaces" value="${esc(nm)}" placeholder="e.g. H6-672 (face)">
-     <span class="hint">Mine / Type</span><span style="display:flex;gap:6px"><select class="inp" id="pkMine">${['NIM','KTM'].map(m=>`<option${(ex?ex.mine:(/^K/i.test(nm)?'KTM':'NIM'))===m?' selected':''}>${m}</option>`).join('')}</select><select class="inp" id="pkKind">${['Face','Stock'].map(m=>`<option${(ex?.kind||'Face')===m?' selected':''}>${m}</option>`).join('')}</select></span>
-     <span class="hint">Ore type</span><input class="inp" id="pkOre" value="${esc(ex?.ore||'')}" placeholder="FO / HO / BD / LO+FO…">
+     <span class="hint">Face name</span><input class="inp" id="pkName" list="dlFaces" placeholder="e.g. H6-672 (face)">
+     <span class="hint">Mine / Type</span><span style="display:flex;gap:6px"><select class="inp" id="pkMine"><option>NIM</option><option>KTM</option></select><select class="inp" id="pkKind"><option>Face</option><option>Stock</option></select></span>
+     <span class="hint">Ore type</span><input class="inp" id="pkOre" placeholder="FO / HO / BD / LO+FO…">
    </div>
-   <div class="bar"><button class="btn pri" id="pkSave">${ex?'Update '+esc(ex.name):'Save to inventory'}</button></div>
-   <div class="bar" style="border-top:1px solid #eef0f3;padding-top:10px"><select class="inp" id="pkPlant" style="flex:1">${plantOpts(S.lastPlant)}</select><input class="inp" id="pkRatio" inputmode="decimal" placeholder="%" style="width:58px"><button class="btn" id="pkAdd">Save + add</button></div>`;
-  $('#pkName').oninput=()=>{const f=S.inv.find(x=>x.name.toLowerCase()===$('#pkName').value.trim().toLowerCase());$('#pkSave').textContent=f?'Update '+f.name:'Save to inventory';if(f){$('#pkOre').value=f.ore||'';$('#pkMine').value=f.mine==='KTM'?'KTM':'NIM'}};
+   <div class="bar"><button class="btn pri" id="pkSave">Save to inventory</button></div>
+   <div class="bar" style="border-top:1px solid #eef0f3;padding-top:10px"><select class="inp" id="pkPlant" style="flex:1">${plantOpts(S.lastPlant)}</select><input class="inp" id="pkRatio" inputmode="decimal" placeholder="%" style="width:58px"><button class="btn" id="pkAdd">Save + add</button></div></div>
+   <details style="margin-top:8px"><summary class="hint">Material colours</summary><div class="chips" style="margin-top:6px">${['DR','W1','W2','BHJ','OB','HO','SG'].map(t=>`<span class="chip"><span class="dot" style="background:${TYPES[t]}"></span>${t}</span>`).join('')}<span class="chip"><span class="dot" style="background:#808080"></span>Other</span></div><div class="hint" style="margin-top:4px">A P suffix (HOP, SGP…) marks high phosphorus and uses the same colour.</div></details>`;
+  $('#pkName').oninput=()=>{nameTouched=true;syncName()};
   $('#pkSave').onclick=()=>savePick();
   $('#pkAdd').onclick=()=>{const f=savePick();if(!f)return;S.lastPlant=$('#pkPlant').value;addToPlant(S.lastPlant,f.id,num($('#pkRatio').value));save()};
-}
-function savePick(){const name=$('#pkName').value.trim();if(!name){msg('Give the face a name');$('#pkName').focus();return null}
-  const {res,g}=SEL;let f=S.inv.find(x=>x.name.toLowerCase()===name.toLowerCase());const isNew=!f;
-  if(!f){f={id:uid(),name,rem:''};S.inv.push(f)}
-  AN.forEach(a=>f[a]=rnd(res.avg[a],a));f.mine=$('#pkMine').value;f.kind=$('#pkKind').value;f.ore=$('#pkOre').value.trim();
-  const c=centre(g);f.lat=c[0];f.lon=c[1];f.src=`Blasthole map: ${res.arr.length} holes, ${S.date} ${S.shift}`;
-  save();renderDL();drawInvPins();msg(`${name} ${isNew?'added to':'updated in'} inventory`);$('#pkSave').textContent='Update '+name;return f}
-function faceInfo(id){const f=inv(id);if(!f)return;const used=PL.filter(p=>S.plants[p.k].rows.some(r=>r.fid===id&&r.ratio)).map(p=>`<span class="chip">${esc(p.sh)} ${fmtR(S.plants[p.k].rows.find(r=>r.fid===id).ratio)}%</span>`).join('');
-  $('#mapPanel').innerHTML=`<h3>${esc(f.name)} <span class="hint">${esc(f.ore||'')} · ${esc(f.mine||'')}</span></h3>${gradeTable(f)}<div class="hint">${esc(f.src||'Manual entry')}</div>
-   <div style="margin:8px 0"><span class="hint">Feeding:</span> <span class="chips" style="display:inline-flex">${used||'<span class="hint">no plant yet</span>'}</span></div>
-   <div class="bar"><button class="btn" id="fiRe">Recalculate from blastholes here</button></div>
-   <div class="bar" style="border-top:1px solid #eef0f3;padding-top:10px"><select class="inp" id="fiPlant" style="flex:1">${plantOpts(S.lastPlant)}</select><input class="inp" id="fiRatio" inputmode="decimal" placeholder="%" style="width:58px"><button class="btn pri" id="fiAdd">Add to plant</button></div>`;
-  $('#fiRe').onclick=()=>pickAt({type:'pt',lat:f.lat,lon:f.lon},f.name);
-  $('#fiAdd').onclick=()=>{S.lastPlant=$('#fiPlant').value;addToPlant(S.lastPlant,id,num($('#fiRatio').value));save();faceInfo(id)}}
-$('#bhLoc').onclick=()=>{if(!navigator.geolocation){msg('Location not available');return}msg('Getting your location…');
-  navigator.geolocation.getCurrentPosition(p=>{const g={type:'pt',lat:p.coords.latitude,lon:p.coords.longitude};if(MAP)MAP.setView([g.lat,g.lon],Math.max(MAP.getZoom(),18));pickAt(g)},()=>msg('Location permission denied or unavailable'),{enableHighAccuracy:true,timeout:15000})};
+  renderRes()}
+function syncName(){const f=S.inv.find(x=>x.name.toLowerCase()===$('#pkName').value.trim().toLowerCase());$('#pkSave').textContent=f?'Update '+f.name:'Save to inventory';if(f){$('#pkOre').value=f.ore||'';$('#pkMine').value=f.mine==='KTM'?'KTM':'NIM';$('#pkKind').value=f.kind==='Stock'?'Stock':'Face'}}
+function suggest(){if(!$('#pkName')||nameTouched||!LAST)return;let best=null,bd=40;S.inv.forEach(f=>{if(f.lat==null)return;const d=MAP.distance([LAST.lat,LAST.lon],[f.lat,f.lon]);if(d<bd){bd=d;best=f}});$('#pkName').value=best?best.name:'';syncName()}
+function renderRes(){const el=$('#pkRes');if(!el)return;
+  if(!LAST){el.innerHTML='No location yet. Drag the excavator or tap the map.';return}
+  if(!RES){el.innerHTML=`<span style="color:#b45309">No blastholes within ${mc().R} m.</span> Move closer or raise the max distance.`;return}
+  const {avg,mix,near,wt}=RES;
+  el.innerHTML=`<div class="q4"><div><b>${fmt(avg.Fe,'Fe')}</b><span>Fe %</span></div><div><b>${fmt(avg.SiO2,'SiO2')}</b><span>SiO2 %</span></div><div><b>${fmt(avg.Al2O3,'Al2O3')}</b><span>Al2O3 %</span></div><div><b>${fmt(avg.P,'P')}</b><span>P %</span></div></div>
+   <div class="hint">${near.length} nearest holes, ${wt?'distance weighted':'simple average'}. Material: ${Object.entries(mix).sort((a,b)=>b[1]-a[1]).map(([t,f])=>`${esc(t)} ${Math.round(f*100)}%`).join(', ')}</div>
+   <div class="wrap" style="margin-top:6px"><table class="g"><tr><th class="l">Hole</th><th>m</th><th>Fe</th><th>SiO2</th><th>Al2O3</th><th>P</th></tr>${near.map(x=>`<tr><td class="l"><span class="dot" style="background:${tcol(x.h.mat)}"></span>${esc(x.h.name||x.h.id)}</td><td>${x.d.toFixed(0)}</td><td>${x.h.Fe??''}</td><td>${x.h.SiO2??''}</td><td>${x.h.Al2O3??''}</td><td>${x.h.P??''}</td></tr>`).join('')}</table></div>`}
+function savePick(){const name=$('#pkName').value.trim();if(!RES){msg('Place the excavator on a face with blastholes in range first');return null}if(!name){msg('Give the face a name');$('#pkName').focus();return null}
+  let f=S.inv.find(x=>x.name.toLowerCase()===name.toLowerCase());const isNew=!f;if(!f){f={id:uid(),name,rem:''};S.inv.push(f)}
+  AN.forEach(a=>f[a]=rnd(RES.avg[a],a));f.mine=$('#pkMine').value;f.kind=$('#pkKind').value;f.ore=$('#pkOre').value.trim();f.lat=LAST.lat;f.lon=LAST.lon;
+  f.src=`Blasthole map: ${RES.near.length} nearest holes ≤${RES.R} m${RES.wt?', distance weighted':''}, ${S.date} ${S.shift}`;
+  save();renderDL();drawInvPins();nameTouched=true;msg(`${name} ${isNew?'added to':'updated in'} inventory`);$('#pkSave').textContent='Update '+name;return f}
+function faceInfo(id){const f=inv(id);if(!f)return;if(!$('#pkName'))renderPanel();
+  if(LOCK){msg(`${f.name}: Fe ${fmt(f.Fe,'Fe')} SiO2 ${fmt(f.SiO2,'SiO2')} Al2O3 ${fmt(f.Al2O3,'Al2O3')}`);return}
+  nameTouched=true;$('#pkName').value=f.name;syncName();setPos(f.lat,f.lon);MAP.panTo([f.lat,f.lon])}
 
 /* ================= plant cards ================= */
 function invOpts(sel){const g={};S.inv.forEach(f=>{const k=(f.mine||'—')+' · '+(f.kind||'Face');(g[k]=g[k]||[]).push(f)});

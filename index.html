@@ -48,6 +48,8 @@ input.ov{background:#fff4c2!important}
 .n{min-width:60px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(560px,1fr));gap:14px}
 @media(max-width:640px){.grid{grid-template-columns:1fr}}
+.grid>*,.side,.card,.board>*,#bdLanes>*{min-width:0}
+html,body{overflow-x:hidden}
 .side h2{font-size:13px;margin:4px 0 8px;padding:6px 10px;background:#fff2cc;border:1px solid #e9d48a;border-radius:5px;text-align:center}
 .card{background:#fff;border:1px solid var(--bd);border-radius:6px;margin-bottom:14px;overflow:hidden}
 .ch{padding:7px 10px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
@@ -144,6 +146,52 @@ textarea{width:100%;font-family:Consolas,monospace;font-size:12px;border:1px sol
 .chg td{padding:5px 6px!important}
 .strike{text-decoration:line-through;color:#9ca3af}
 .reason{width:100%;padding:5px 7px;border:1px solid var(--bd);border-radius:4px;font-family:inherit;font-size:12.5px}
+/* remarks */
+.rmk{flex:1;min-width:180px;padding:5px 8px;border:1px solid var(--bd);border-radius:4px;font-family:inherit;font-size:12.5px;color:#1f3a8a}
+.rmkgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:8px}
+.rmkgrid label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600}
+.rmkgrid label span{padding:3px 8px;border-radius:4px;align-self:flex-start}
+.rmkgrid .inp{width:100%}
+/* zoom */
+#zoomWrap{display:flex;gap:2px;margin-left:auto}
+#zoomWrap button{background:#ffffff26;color:#fff;border:1px solid #ffffff55;border-radius:5px;padding:4px 9px;font-weight:700;cursor:pointer;font-size:13px}
+#zoomWrap button:disabled{opacity:.4}
+#imgBox{overflow:auto;max-height:80vh;border:1px solid var(--bd);border-radius:6px;background:#fff;-webkit-overflow-scrolling:touch}
+#imgBox img{display:block;border:0}
+/* phones and small tablets */
+@media (max-width:700px){
+  body{font-size:14px}
+  header{padding:8px 10px;gap:6px 10px}
+  header h1{font-size:15px;width:100%;margin:0}
+  header label{font-size:12px}
+  header input,header select{font-size:16px;padding:6px}
+  #hInc{width:130px!important}
+  #zoomWrap{margin-left:0}
+  nav{padding:4px 4px 0}
+  nav button{padding:10px 10px;font-size:13.5px}
+  nav .sep{display:none}
+  main{padding:8px}
+  .panel{padding:10px}
+  .btn{padding:9px 12px;font-size:14px}
+  .btn.sm{padding:6px 10px;font-size:13px}
+  .inp,textarea,.rmk{font-size:16px}
+  table.g input,table.g select{font-size:15px;min-height:34px}
+  table.g td{padding:3px 2px}
+  .x{font-size:18px;padding:4px 8px}
+  .card .ch{font-size:15px}
+  .cf{gap:6px}.cf .rmk{min-width:100%}
+  .altbox{gap:6px}.altadd{font-size:15px;max-width:100%;flex:1;min-height:34px}
+  .achip{font-size:13px;padding:4px 6px 4px 10px}
+  .grid{gap:8px}
+  .lt input{width:60px;font-size:16px;padding:4px}
+  .le input[type=range]{height:28px}
+  .drop{padding:12px;font-size:13px}
+  .fc{padding:9px 10px}
+  .rmkgrid{grid-template-columns:1fr}
+  #imgBox{max-height:70vh}
+  #msg{bottom:10px;font-size:14px}
+}
+@media (hover:none){.fc{cursor:pointer}}
 </style>
 </head>
 <body>
@@ -152,6 +200,7 @@ textarea{width:100%;font-family:Consolas,monospace;font-size:12px;border:1px sol
   <label>Date <input type="date" id="hDate"></label>
   <label>Shift <select id="hShift"><option>A</option><option>B</option><option>C</option></select></label>
   <label>NRD In-charge <input id="hInc" placeholder="Name" style="width:140px"></label>
+  <div id="zoomWrap" title="Screen size"><button id="zOut" aria-label="Smaller">A&minus;</button><button id="zPct" aria-label="Reset size">100%</button><button id="zIn" aria-label="Larger">A+</button></div>
 </header>
 <nav>
   <button data-t="inv" class="on">Inventory</button>
@@ -240,6 +289,10 @@ textarea{width:100%;font-family:Consolas,monospace;font-size:12px;border:1px sol
     <div class="hint" style="margin-top:6px">For automatic matching, name faces with pit and MRL as usual (e.g. H6-672, WP-516, P4-658, K-702/714) and stocks with the same name the samplers use (e.g. Jig SY, DCMP STK). Set Mine (NIM / KTM) and Type (Face / Stock) in Inventory.</div>
   </div>
   <div class="panel">
+    <h3>Remarks <span class="hint" style="font-weight:400">— printed in the schedule image and the Excel copy</span></h3>
+    <div class="rmkgrid" id="rmkOut"></div>
+  </div>
+  <div class="panel">
     <h3>Schedule image (to share)</h3>
     <div class="bar">
       <button class="btn pri" id="imgShare">Share image</button>
@@ -247,7 +300,8 @@ textarea{width:100%;font-family:Consolas,monospace;font-size:12px;border:1px sol
       <button class="btn" id="imgCopy">Copy image</button>
       <span class="hint">If a button is blocked, long-press / right-click the image → Save or Copy.</span>
     </div>
-    <img id="imgPrev" alt="Schedule image">
+    <div class="bar izbar"><span class="hint">Image zoom</span><button class="btn sm" id="izOut">&minus;</button><button class="btn sm" id="izFit">Fit</button><button class="btn sm" id="izIn">+</button><span class="hint" id="izPct"></span></div>
+    <div id="imgBox"><img id="imgPrev" alt="Schedule image"></div>
   </div>
   <div class="panel">
     <h3>Sheet format (paste into the online Excel schedule)</h3>
@@ -284,10 +338,10 @@ textarea{width:100%;font-family:Consolas,monospace;font-size:12px;border:1px sol
 const AN=['Fe','SiO2','Al2O3','P','K2O'],AN4=AN.slice(0,4);
 const DEC={Fe:2,SiO2:2,Al2O3:2,P:3,K2O:3};
 const PL=[
- {k:'wet',  n:'Wet Ckt. Plant',          sh:'Wet Ckt',  s:'L',an:AN, alt:1,c:'#d8e4bc'},
- {k:'ndcmp',n:'NDCMP / DCMP STK',        sh:'NDCMP',    s:'L',an:AN, alt:1,c:'#b7dee8'},
- {k:'iopph',n:'IOPP Plant (Hopper)',     sh:'IOPP-H',   s:'L',an:AN, alt:1,c:'#bfbfbf'},
- {k:'ioppj',n:'IOPP Plant (Jaw Crusher)',sh:'IOPP-J',   s:'L',an:AN, alt:0,c:'#bfbfbf'},
+ {k:'wet',  n:'Wet Ckt. Plant',          sh:'Wet Ckt',  s:'L',an:AN, alt:1,rem:1,c:'#d8e4bc'},
+ {k:'ndcmp',n:'NDCMP / DCMP STK',        sh:'NDCMP',    s:'L',an:AN, alt:1,rem:1,c:'#b7dee8'},
+ {k:'iopph',n:'IOPP Plant (Hopper)',     sh:'IOPP-H',   s:'L',an:AN, alt:1,rem:1,c:'#bfbfbf'},
+ {k:'ioppj',n:'IOPP Plant (Jaw Crusher)',sh:'IOPP-J',   s:'L',an:AN, alt:0,rem:1,c:'#bfbfbf'},
  {k:'csnim',n:'C&S Plant Feed NIM',      sh:'C&S NIM',  s:'R',an:AN4,alt:0,c:'#ebf1de'},
  {k:'metnim',n:'METSO Plant Feed NIM',   sh:'METSO NIM',s:'R',an:AN4,alt:0,c:'#c5d9f1'},
  {k:'sandktm',n:'SANDVIK Plant Feed KTM',sh:'SANDVIK',  s:'R',an:AN4,alt:0,c:'#ebf1de'},
@@ -323,7 +377,7 @@ function seedInv(){return [
 ].map(r=>({id:uid(),name:r[0],ore:r[1],Fe:r[2],SiO2:r[3],Al2O3:r[4],P:r[5],K2O:r[6],mine:r[7],kind:r[8],rem:''}))}
 const blankRows=(n=3)=>Array.from({length:n},()=>({fid:'',ratio:null,ov:{}}));
 function defState(){const p={};PL.forEach(x=>p[x.k]={rows:blankRows(),alt:'',altIds:[]});return{date:today(),shift:guessShift(),inc:'',inv:seedInv(),plants:p}}
-function fix(s){PL.forEach(x=>{if(!s.plants[x.k])s.plants[x.k]={rows:blankRows(),alt:''};const ps=s.plants[x.k];if(!Array.isArray(ps.altIds))ps.altIds=[];if(ps.alt==null)ps.alt=''});
+function fix(s){PL.forEach(x=>{if(!s.plants[x.k])s.plants[x.k]={rows:blankRows(),alt:''};const ps=s.plants[x.k];if(!Array.isArray(ps.altIds))ps.altIds=[];if(ps.alt==null)ps.alt='';if(ps.rmk==null)ps.rmk=''});
   s.targets=s.targets||{};s.opt=s.opt||{};s.reasons=s.reasons||{};s.mapCfg=Object.assign({k:3,R:15,w:true,lbl:true},s.mapCfg||{});if(typeof s.mapCfg.w!=='boolean')s.mapCfg.w=true;s.base=s.base||null;s.blendPlant=s.blendPlant||'wet';return s}
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.inv&&s.plants)return s}catch(e){}return null}
 let S=fix(load()||defState());
@@ -713,7 +767,7 @@ function card(p){const st=S.plants[p.k];
   return `<div class="card" data-p="${p.k}"><div class="ch" style="background:${p.c}"><span>${esc(p.n)}</span><span class="badge" id="bd-${p.k}"></span></div>
   <div style="overflow-x:auto"><table class="g"><thead><tr><th class="l">Area/Face</th><th>Ore Type</th><th>Ratio</th>${p.an.map(a=>`<th class="n">${a}</th>`).join('')}<th></th></tr></thead>
   <tbody>${rows}</tbody><tfoot><tr id="tf-${p.k}"></tr></tfoot></table></div>
-  <div class="cf"><button class="btn sm" data-add>+ Row</button></div>${altBox(p)}</div>`}
+  <div class="cf"><button class="btn sm" data-add>+ Row</button>${p.rem?`<input class="rmk" data-rmk="${p.k}" value="${esc(st.rmk||'')}" placeholder="Remarks (shown in the schedule)">`:''}</div>${altBox(p)}</div>`}
 function badge(p,c){if(!c.used)return['','Not scheduled'];return ratioOK(c)?['ok','Ratio 100 ✓']:['bad',`Ratio ${fmtR(c.sr)} (${c.sr<100?'short '+fmtR(100-c.sr):'over '+fmtR(c.sr-100)})`]}
 function updTot(p){const c=calc(p),tf=$('#tf-'+p.k);if(!tf)return;
   tf.innerHTML=`<td colspan="2" style="text-align:right">Total / Avg =</td><td style="color:${c.used&&!ratioOK(c)?'var(--bad)':'inherit'}">${fmtR(c.sr)}</td>${p.an.map(a=>`<td>${fmt(c.avg[a],a)}</td>`).join('')}<td></td>`;
@@ -721,6 +775,7 @@ function updTot(p){const c=calc(p),tf=$('#tf-'+p.k);if(!tf)return;
 function renderPlants(){renderDL();$('#pL').innerHTML=PL.filter(p=>p.s==='L').map(card).join('');$('#pR').innerHTML=PL.filter(p=>p.s==='R').map(card).join('');PL.forEach(updTot)}
 function plantEv(e,type){const cd=e.target.closest('.card');if(!cd)return;const p=PK(cd.dataset.p),st=S.plants[p.k];
   const redraw=()=>{save();cd.outerHTML=card(p);updTot(p)};
+  if(e.target.dataset.rmk){st.rmk=e.target.value;save();return}
   if(altEv(e)){if(e.type!=='input'){cd.outerHTML=card(p);updTot(p)}return}
   if(type==='click'){if(e.target.hasAttribute('data-add')){st.rows.push({fid:'',ratio:null,ov:{}});redraw()}else if(e.target.hasAttribute('data-del')){st.rows.splice(+e.target.closest('tr').dataset.i,1);redraw()}return}
   const tr=e.target.closest('tr[data-i]');if(!tr)return;const r=st.rows[+tr.dataset.i],k=e.target.dataset.f;
@@ -783,7 +838,7 @@ const H=()=>{try{return JSON.parse(localStorage.getItem(HKEY))||[]}catch(e){retu
 const setH=h=>{try{localStorage.setItem(HKEY,JSON.stringify(h))}catch(e){msg('Could not save in this browser')}};
 
 /* ================= output ================= */
-const C=(t,o={})=>({t:t??'',s:o.s||1,bg:o.bg||'',b:!!o.b,c:o.c||'',nb:!!o.nb,d:o.d});
+const C=(t,o={})=>({t:t??'',s:o.s||1,bg:o.bg||'',b:!!o.b,c:o.c||'',nb:!!o.nb,d:o.d,w:!!o.w});
 function block(p){const n=3+p.an.length,st=S.plants[p.k],bg=p.c,rows=[];
   rows.push([C(p.n,{s:n,bg,b:1})]);
   rows.push([C('Area/Face',{bg,b:1}),C('Ore Type',{bg,b:1}),C('Ratio',{bg,b:1}),C('Suggested Analysis (%)',{s:p.an.length,bg,b:1})]);
@@ -794,22 +849,23 @@ function block(p){const n=3+p.an.length,st=S.plants[p.k],bg=p.c,rows=[];
   const c=calc(p);
   rows.push([C('Total/Avg =',{s:2,b:1,bg}),C(c.used?fmtR(c.sr):'',{b:1,bg,c:c.used&&!ratioOK(c)?'#c00000':''}),...p.an.map(a=>C(fmt(c.avg[a],a),{b:1,bg,d:DEC[a]}))]);
   const at=altText(p.k);if(p.alt||at)rows.push([C(altLabel(p.k),{s:2,b:1}),C(at,{s:n-2,b:1,c:'#e00000'})]);
+  if(p.rem)rows.push([C('Remarks',{s:2,b:1}),C(st.rmk||'',{s:n-2,c:'#1f3a8a',w:1})]);
   rows.push([C('',{s:n,nb:1})]);return rows}
 function model(){const L=[[C('NRD In-charge',{s:2,b:1}),C((S.inc||'').toUpperCase(),{s:6,b:1})],[C('Departmental Plant',{s:8,b:1,bg:'#fff2cc'})]];
   const R=[[C('',{s:7,nb:1})],[C('Out Sourced Plant',{s:7,b:1,bg:'#fff2cc'})]];
   PL.forEach(p=>(p.s==='L'?L:R).push(...block(p)));
   while(L.length<R.length)L.push([C('',{s:8,nb:1})]);while(R.length<L.length)R.push([C('',{s:7,nb:1})]);
   while(L.length&&L[L.length-1][0].nb&&R[R.length-1][0].nb){L.pop();R.pop()}return{L,R}}
-const WL=[118,72,50,60,60,60,60,60],WR=[118,72,50,62,62,62,62],WD=30,WS=26,GAP=16,RH=21,PAD=6;
+const WL=[118,72,50,60,60,60,60,60],WR=[118,72,50,62,62,62,62],WD=30,WS=30,GAP=16,RH=21,PAD=6;
 function drawImg(){const {L,R}=model(),W=PAD*2+WD+WS+WL.reduce((a,b)=>a+b)+GAP+WR.reduce((a,b)=>a+b),Hh=PAD*2+L.length*RH,sc=2;
   const cv=document.createElement('canvas');cv.width=W*sc;cv.height=Hh*sc;const g=cv.getContext('2d');g.scale(sc,sc);
   g.fillStyle='#fff';g.fillRect(0,0,W,Hh);g.lineWidth=.8;g.strokeStyle='#000';g.textBaseline='middle';
-  const txt=(t,x,y,w,b,col)=>{if(!t)return;let fs=11.5;g.fillStyle=col||'#000';do{g.font=`${b?'bold ':''}${fs}px Arial`;fs-=.5}while(g.measureText(t).width>w-6&&fs>7);g.textAlign='center';g.fillText(t,x+w/2,y+RH/2+.5)};
+  const txt=(t,x,y,w,b,col,wrap)=>{if(!t)return;if(wrap){g.font=`${b?'bold ':''}11px Arial`;if(g.measureText(t).width>w-8){const ws=t.split(' ');let a='',i=0;while(i<ws.length&&g.measureText((a+' '+ws[i]).trim()).width<=w-8){a=(a+' '+ws[i]).trim();i++}const b2=ws.slice(i).join(' ');if(a&&b2){g.fillStyle=col||'#000';g.textAlign='center';let fs=10;g.font=`${b?'bold ':''}${fs}px Arial`;g.fillText(a,x+w/2,y+RH/2-4.5);while(g.measureText(b2).width>w-6&&fs>7){fs-=.5;g.font=`${b?'bold ':''}${fs}px Arial`}g.fillText(b2,x+w/2,y+RH/2+5);return}}}let fs=11.5;g.fillStyle=col||'#000';do{g.font=`${b?'bold ':''}${fs}px Arial`;fs-=.5}while(g.measureText(t).width>w-6&&fs>7);g.textAlign='center';g.fillText(t,x+w/2,y+RH/2+.5)};
   const top=PAD,h=L.length*RH;let x=PAD;
   g.strokeRect(x,top,WD,h);g.save();g.translate(x+WD/2,top+h/2);g.rotate(-Math.PI/2);g.font='bold 12px Arial';g.textAlign='center';g.fillStyle='#000';g.fillText(S.date||'',0,1);g.restore();x+=WD;
-  g.strokeRect(x,top,WS,h);g.font='bold 14px Arial';g.textAlign='center';g.fillText(S.shift||'',x+WS/2,top+h/2);x+=WS;
+  g.strokeRect(x,top,WS,h);g.save();g.fillStyle='#000';g.translate(x+WS/2,top+h/2);g.rotate(-Math.PI/2);g.textAlign='center';g.font='bold 15px Arial';g.fillText(S.shift?'Shift '+S.shift:'',0,1);g.restore();x+=WS;
   const side=(rows,ws,x0)=>rows.forEach((row,ri)=>{let cx=x0,ci=0;const y=top+ri*RH;row.forEach(c=>{const w=ws.slice(ci,ci+c.s).reduce((a,b)=>a+b,0);
-    if(!c.nb){g.fillStyle=c.bg||'#fff';g.fillRect(cx,y,w,RH);g.strokeStyle='#000';g.strokeRect(cx,y,w,RH);txt(c.t,cx,y,w,c.b,c.c)}cx+=w;ci+=c.s})});
+    if(!c.nb){g.fillStyle=c.bg||'#fff';g.fillRect(cx,y,w,RH);g.strokeStyle='#000';g.strokeRect(cx,y,w,RH);txt(c.t,cx,y,w,c.b,c.c,c.w)}cx+=w;ci+=c.s})});
   side(L,WL,x);side(R,WR,x+WL.reduce((a,b)=>a+b)+GAP);return cv}
 let lastBlob=null;const fname=()=>`Feed_Schedule_${S.date||''}_${S.shift||''}.png`;
 const getBlob=()=>new Promise(r=>drawImg().toBlob(r,'image/png'));
@@ -822,7 +878,10 @@ function xlHTML(ds){const {L,R}=model(),n=L.length,cols=[...(ds?[WD,WS]:[]),...W
     h+=L[i].map(td).join('')+'<td style="border:none"></td>'+R[i].map(td).join('')+'</tr>'}return h+'</table>'}
 function tsv(ds){const {L,R}=model();const cells=row=>row.flatMap(c=>[c.t,...Array(c.s-1).fill('')]);
   return L.map((l,i)=>[...(ds?(i===0?[S.date,S.shift]:['','']):[]),...cells(l),'',...cells(R[i])].join('\t')).join('\n')}
-async function renderOut(){const ds=$('#incDS').checked;$('#xl').innerHTML=xlHTML(ds);$('#tsv').value=tsv(ds);
+function renderRmk(){$('#rmkOut').innerHTML=PL.filter(p=>p.rem).map(p=>`<label><span style="background:${p.c}">${esc(p.n)}</span><input class="inp" data-orm="${p.k}" value="${esc(S.plants[p.k].rmk||'')}" placeholder="e.g. feed stopped 2 h for belt repair"></label>`).join('')}
+let rmkT=null;$('#rmkOut').addEventListener('input',e=>{const k=e.target.dataset.orm;if(!k)return;S.plants[k].rmk=e.target.value;save();clearTimeout(rmkT);rmkT=setTimeout(refreshOut,500)});
+async function refreshOut(){const ds=$('#incDS').checked;$('#xl').innerHTML=xlHTML(ds);$('#tsv').value=tsv(ds);lastBlob=await getBlob();const old=$('#imgPrev').src;$('#imgPrev').src=URL.createObjectURL(lastBlob);if(old.startsWith('blob:'))URL.revokeObjectURL(old)}
+async function renderOut(){renderRmk();const ds=$('#incDS').checked;$('#xl').innerHTML=xlHTML(ds);$('#tsv').value=tsv(ds);
   lastBlob=await getBlob();const old=$('#imgPrev').src;$('#imgPrev').src=URL.createObjectURL(lastBlob);if(old.startsWith('blob:'))URL.revokeObjectURL(old);
   const warn=PL.filter(p=>{const c=calc(p);return c.used&&!ratioOK(c)}).map(p=>p.sh);if(warn.length)msg('Ratio not 100 in: '+warn.join(', '))}
 $('#incDS').onchange=renderOut;
@@ -867,11 +926,22 @@ $('#hSave').onclick=()=>{saveShift();renderHist();msg(`Saved ${S.date} shift ${S
 $('#histT').onclick=e=>{const h=H(),t=e.target;
   if(t.dataset.ld){const keepBH=S.mapCfg;S=fix(JSON.parse(JSON.stringify(h[+t.dataset.ld].s)));S.mapCfg=keepBH;save();syncHeader();msg(`Loaded ${S.date} ${S.shift}`);showTab('plants')}
   if(t.dataset.dl){h.splice(+t.dataset.dl,1);setH(h);renderHist()}};
-$('#hNext').onclick=()=>{saveShift();const o=['A','B','C'],i=o.indexOf(S.shift);
+$('#hNext').onclick=()=>{saveShift();PL.forEach(p=>S.plants[p.k].rmk='');const o=['A','B','C'],i=o.indexOf(S.shift);
   if(i===2){const d=new Date(S.date+'T00:00:00');d.setDate(d.getDate()+1);S.date=ymd(d);S.shift='A'}else S.shift=o[i+1];
   save();syncHeader();msg(`Now on ${S.date} shift ${S.shift} — plan carried forward`);showTab('plants')};
 $('#bkOut').onclick=()=>{$('#bkTxt').value=JSON.stringify({state:S,hist:H()});$('#bkTxt').select()};
 $('#bkIn').onclick=()=>{try{const o=JSON.parse($('#bkTxt').value);if(!o.state||!o.state.inv)throw 0;S=fix(o.state);if(o.hist)setH(o.hist);save();syncHeader();renderHist();msg('Restored')}catch(e){msg('Not a valid backup text')}};
+
+/* ================= zoom ================= */
+{const Z=[70,80,90,100,110,125,150,175];let zi=3;try{const v=+localStorage.getItem('fsp_zoom');if(Z.includes(v))zi=Z.indexOf(v)}catch(e){}
+ const apply=()=>{const v=Z[zi];document.querySelectorAll('.tab:not(#t-map),nav,header').forEach(el=>{el.style.zoom=v===100?'':String(v/100)});
+   $('#zPct').textContent=v+'%';$('#zOut').disabled=zi===0;$('#zIn').disabled=zi===Z.length-1;try{localStorage.setItem('fsp_zoom',String(v))}catch(e){}};
+ $('#zIn').onclick=()=>{if(zi<Z.length-1){zi++;apply()}};$('#zOut').onclick=()=>{if(zi>0){zi--;apply()}};$('#zPct').onclick=()=>{zi=Z.indexOf(100);apply()};apply()}
+{let iz=0;const img=$('#imgPrev'),box=$('#imgBox');
+ const apply=()=>{if(!iz){img.style.width='100%';img.style.maxWidth='100%';$('#izPct').textContent='Fit to screen'}else{img.style.maxWidth='none';img.style.width=(img.naturalWidth/2*iz/100)+'px';$('#izPct').textContent=iz+'%'}};
+ const cur=()=>iz||Math.round(box.clientWidth/(img.naturalWidth/2)*100)||100;
+ $('#izIn').onclick=()=>{iz=Math.min(300,Math.round(cur()*1.25/5)*5);apply()};$('#izOut').onclick=()=>{iz=Math.max(25,Math.round(cur()/1.25/5)*5);apply()};$('#izFit').onclick=()=>{iz=0;apply()};
+ img.addEventListener('load',apply);img.addEventListener('dblclick',()=>{iz=iz?0:100;apply()})}
 
 /* ================= start ================= */
 syncHeader();renderInv();
